@@ -1,4 +1,4 @@
-#Projet Système TP Janvier 2022
+# Projet Système TP Janvier 2022
 
 Le but du projet est de gérer un week-end complet d’un grand prix de Formule 1, depuis les séances d’essais du vendredi jusqu’à la course du dimanche, en passant par les essais du samedi et la séance de qualifications.
 Il y a 20 voitures engagées dans un grand prix.
@@ -7,7 +7,7 @@ Leurs numéros sont : 44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99
 
 Un circuit de F1 est divisé en 3 secteurs (S1, S2, S3).
 
-##Le calendrier d’un week-end de F1 est établi comme suit :
+## Le calendrier d’un week-end de F1 est établi comme suit :
 -	Vendredi matin, une séance d’essais libres d’1h30 (P1)
 -	Vendredi après-midi, une séance d’essais libres d’1h30 (P2)
 -	Samedi matin, une séance d’essais libres d’1h (P3)
@@ -28,7 +28,7 @@ Lors des séances d’essais (P1, P2, P3) :
 -	Dans ces 2 derniers cas, on conserve toujours le meilleur temps de la voiture et celle-ci reste dans le classement
 -	Conserver sur fichier le classement final à la fin de chaque séance
  
-##Lors des qualifications (Q1, Q2, Q3) :
+## Lors des qualifications (Q1, Q2, Q3) :
 -	Relever les temps dans les 3 secteurs à chaque passage pour chaque voiture
 -	Toujours savoir qui a le meilleur temps dans chacun des secteurs
 -	Classer les voitures en fonction de leur tour complet le plus rapide
@@ -40,9 +40,9 @@ Lors des séances d’essais (P1, P2, P3) :
 -	A la fin de Q2, il reste 10 voitures qualifiées pour Q3 et les 5 dernières sont placées dans les places 11 à 15 de la grille de départ
 -	Le classement de Q3 attribue les places 1 à 10 de la grille de départ
 -	Conserver sur fichier le classement final à la fin des 3 séances (ce sera l’ordre de départ pour la course)
-###Attention ! Lors des essais et des qualifications, les voitures roulent quand elles veulent. Il n’y a pas un nombre déterminé de tours à faire.
+### Attention ! Lors des essais et des qualifications, les voitures roulent quand elles veulent. Il n’y a pas un nombre déterminé de tours à faire.
 
-##Lors de la course : (un nombre déterminé de tours !!!)
+## Lors de la course : (un nombre déterminé de tours !!!)
 -	Le premier classement est l’ordre sur la grille de départ
 -	Le classement doit toujours être maintenu tout au long de la course (gérer les dépassements)
 -	Indiquer la différence de temps avec la voiture qui précède
