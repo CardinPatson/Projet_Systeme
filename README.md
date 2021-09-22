@@ -40,7 +40,7 @@ Lors des séances d’essais (P1, P2, P3) :
 -	A la fin de Q2, il reste 10 voitures qualifiées pour Q3 et les 5 dernières sont placées dans les places 11 à 15 de la grille de départ
 -	Le classement de Q3 attribue les places 1 à 10 de la grille de départ
 -	Conserver sur fichier le classement final à la fin des 3 séances (ce sera l’ordre de départ pour la course)
-### Attention ! Lors des essais et des qualifications, les voitures roulent quand elles veulent. Il n’y a pas un nombre déterminé de tours à faire.
+**Attention ! Lors des essais et des qualifications, les voitures roulent quand elles veulent. Il n’y a pas un nombre déterminé de tours à faire.**
 
 ## Lors de la course : (un nombre déterminé de tours !!!)
 -	Le premier classement est l’ordre sur la grille de départ
@@ -52,13 +52,13 @@ Lors des séances d’essais (P1, P2, P3) :
 -	Savoir si la voiture est out (abandon) ; dans ce cas, elle sera classée en fin de classement
 -	Savoir si la voiture est aux stands (PIT), gérer le temps aux stands et faire ressortir la voiture à sa place dans la course (généralement 2 ou 3 PIT par voitures)
 -	Conserver sur fichier le classement final et le tour le plus rapide
-Remarque : les stands se trouvent toujours dans le secteur 3.
+**Remarque : les stands se trouvent toujours dans le secteur 3.**
 
  
 De plus, il vous est demandé de paramétrer votre programme.
 En effet, les circuits peuvent être de longueur très variable et, dès lors, le nombre de tours pour la course varie également (on essaie que le nombre total de kilomètres soit toujours plus ou moins le même pour chacune des courses du calendrier : environ 300-350 km).
 
-On vous demande :
+##On vous demande :
 -	De réaliser le programme en C sous Linux
 -	D’utiliser la mémoire partagée comme moyen de communication inter-processus
 -	D’utiliser les sémaphores pour synchroniser l’accès à la mémoire partagée
