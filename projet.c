@@ -5,10 +5,10 @@
 int generateNumberBetween25_40();
 
 typedef struct {
-	int numero
-	char pilote
- 	int vitesse	
-}voiture 
+	int numero;
+	char pilote;
+ 	int vitesse;	
+}voiture; 
 //difffere sur le numero
 // 1 course = 300km
 
