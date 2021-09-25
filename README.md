@@ -12,13 +12,17 @@ Un circuit de F1 est divisé en 3 secteurs (S1, S2, S3).
 -	Vendredi après-midi, une séance d’essais libres d’1h30 (P2)
 -	Samedi matin, une séance d’essais libres d’1h (P3)
 -	Samedi après-midi, la séance de qualifications, divisée en 3 parties :
-o	Q1, durée 18 minutes, qui élimine les 5 dernières voitures (qui occuperont les places 16 à 20 sur la grille de départ de la course)
-o	Q2, durée 15 minutes, qui élimine les 5 voitures suivantes (qui occuperont les places 11 à 15 sur la grille de départ de la course)
-o	Q3, durée 12 minutes, qui permet de classer les 10 voitures restantes pour établir les 10 premières places sur la grille de départ de la course
+
+ -	Q1, durée 18 minutes, qui élimine les 5 dernières voitures (qui occuperont les places 16 à 20 sur la grille de départ de la course)
+ -	Q2, durée 15 minutes, qui élimine les 5 voitures suivantes (qui occuperont les places 11 à 15 sur la grille de départ de la course)
+ -	Q3, durée 12 minutes, qui permet de classer les 10 voitures restantes pour établir les 10 premières places sur la grille de départ de la course
 -	Dimanche après-midi, la course en elle-même.
+
 Votre projet devra prendre en charge les choses suivantes.
-Première partie : gestion des séances d’essai, des qualifications et de la course
-Lors des séances d’essais (P1, P2, P3) :
+
+**Première partie : gestion des séances d’essai, des qualifications et de la course**
+
+## Lors des séances d’essais (P1, P2, P3) :
 -	Relever les temps dans les 3 secteurs à chaque passage pour chaque voiture
 -	Toujours savoir qui a le meilleur temps dans chacun des secteurs
 -	Classer les voitures en fonction de leur tour complet le plus rapide
@@ -57,7 +61,7 @@ Lors des séances d’essais (P1, P2, P3) :
 **Remarque : les stands se trouvent toujours dans le secteur 3.**
 
  
-*De plus, il vous est demandé de paramétrer votre programme.*
+De plus, il vous est demandé de **paramétrer votre programme.***
 
 En effet, les circuits peuvent être de longueur très variable et, dès lors, le nombre de tours pour la course varie également (on essaie que le nombre total de kilomètres soit toujours plus ou moins le même pour chacune des courses du calendrier : environ 300-350 km).
 
