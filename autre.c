@@ -45,14 +45,13 @@ int main()
         }
     }
 
-    int Length  = sizeof(tempsS1)/sizeof(int);
-
 
     for (size_t i = 0; i < compteur; i++)
     {
         printf("%d\n", tempsS1[i]);
     }
     
+    free(tempsS1);
   
     return (0);
 }
@@ -61,4 +60,3 @@ int main()
 int generateNumber(void){
   return (rand() % 14 + 26);
 }
-
