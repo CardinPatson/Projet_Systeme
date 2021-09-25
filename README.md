@@ -13,9 +13,9 @@ Un circuit de F1 est divisé en 3 secteurs (S1, S2, S3).
 -	Samedi matin, une séance d’essais libres d’1h (P3)
 -	Samedi après-midi, la séance de qualifications, divisée en 3 parties :
 
- -	Q1, durée 18 minutes, qui élimine les 5 dernières voitures (qui occuperont les places 16 à 20 sur la grille de départ de la course)
- -	Q2, durée 15 minutes, qui élimine les 5 voitures suivantes (qui occuperont les places 11 à 15 sur la grille de départ de la course)
- -	Q3, durée 12 minutes, qui permet de classer les 10 voitures restantes pour établir les 10 premières places sur la grille de départ de la course
+   -	Q1, durée 18 minutes, qui élimine les 5 dernières voitures (qui occuperont les places 16 à 20 sur la grille de départ de la course)
+   -	Q2, durée 15 minutes, qui élimine les 5 voitures suivantes (qui occuperont les places 11 à 15 sur la grille de départ de la course)
+   -	Q3, durée 12 minutes, qui permet de classer les 10 voitures restantes pour établir les 10 premières places sur la grille de départ de la course
 -	Dimanche après-midi, la course en elle-même.
 
 Votre projet devra prendre en charge les choses suivantes.
