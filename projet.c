@@ -3,49 +3,59 @@
 #include <time.h>
 
 int generateNumberBetween25_40();
-int generate();
 
 typedef struct {
         int numero;
-        char pilote[30];
-        int vitesse;
-        int *tempsS2;
         int *tempsS1;
+        int *tempsS2;
         int *tempsS3;
+} voiture;
 
-}voiture;
-//difffere sur le numero
-// 1 course = 300km
+
+
+
+
 
 int main(int argc , char **argv)
 {
-  generate();
 
-  //Information sur la voiture
+    
+int tableauNumeroVoitures[20] = { 44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63 };
 
-  voiture voiture[20];
+voiture tabStuctVoiture[20];
 
-  printf("Numero de voiture: \t");
-  scanf("%d" , &voiture[0].numero);
-  printf("Nom du pilote: \t");
-  scanf("%s" , voiture[0].pilote);
-  printf("Vitesse de la voiture: \t");
-  scanf("%d" , &voiture[0].vitesse);
 
-  printf("Pilote %s , voiture %d de vitesse %d pret pour l'essai libre\n\n" , voiture[0].pilote , voiture[0].numero , voiture[0].vitesse);
+  /* initialize random generator srand doit etre appeléune seule fois */
+    srand ( time(NULL) );
+
+
+    size_t i;
+
+    for (i = 0; i < 20; i++)
+    {
+        tabStuctVoiture[i].numero = tableauNumeroVoitures[i];
+        
+        printf("%d\n", tabStuctVoiture[i].numero);
+    }
+
+
+  
 
   //Essaie libre : 1h30 = 5400s
   //voiture[0].tempsS1 = (int*)malloc(1*sizeof(int));
   int temps_secteur1 = 0 ;
   int temps_secteur2 = 0 ;
   int temps_secteur3 = 0 ;
+
   int temps_secteur = 0 ;
   int count_secteur = 1;
+
   int countS1 = 0;
   int countS2 = 0;
   int countS3 = 0;
+
   //lors de l'initialisation du tableau ()
-  while(temps_secteur<=5400){//1, 2 , 3
+  while(temps_secteur <= 5400){//1, 2 , 3
 
     if(count_secteur == 1){
 
@@ -83,17 +93,8 @@ int main(int argc , char **argv)
   return 0;
 }
 
-/* generer un nbr entre 25 et 40 (après ont va le convertir en minutes...) */
 
-int generate(){
 
-  /* initialize random generator srand doit etre appeléune seule fois */
-    srand ( time(NULL) );
-
-  /* generate random numbers */
-  //NB quand on le melange avec srand il g�nere le nombre 1 fois pour tout le programme
- //  return (rand() % 15 + 25);
-}
 
 int generateNumberBetween25_40(){
 
