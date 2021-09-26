@@ -2,66 +2,81 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define NOMBRE 1
+
 int generateNumber(void);
 
 
 typedef struct {
         int numero;
-        int *temps;
+        
+        int *temps_S1;
+        int *temps_S2;
+        int *temps_S3;
+
+        int tempsTotal;
 } voiture;
 
-voiture tabStuctVoiture[3];
+voiture tabStuctVoiture[NOMBRE];
 
 
 
 int main(void) {
 
     srand (time(NULL));
-    int compteur = 0;
-    int temps_secteur = 0;
 
-    while(temps_secteur <= 5400) {
+    int compteur = 0; // pour savoir si malloc() ou realloc()
+
+    
+    
+
+    while(tabStuctVoiture[0].tempsTotal <= 5400) {
 
         if (compteur == 0)
         {
-            for (size_t k = 0; k < 3; k++)
+            for (size_t k = 0; k < NOMBRE; k++)
             {
-                tabStuctVoiture[k].temps = calloc(1, sizeof(int));
-                if (tabStuctVoiture[k].temps == NULL) {
+                tabStuctVoiture[k].temps_S1 = calloc(1, sizeof(int));
+                if (tabStuctVoiture[k].temps_S1 == NULL) {
                     perror("Problem calloc() !");
                     exit(EXIT_FAILURE);
                 }
-                tabStuctVoiture[k].temps[0] = generateNumber();
-                temps_secteur += tabStuctVoiture[k].temps[0];
+                tabStuctVoiture[k].temps_S1[0] = generateNumber();
+                tabStuctVoiture[k].tempsTotal += tabStuctVoiture[k].temps_S1[0];
             }
             compteur++;
         }
 
         else
         {
-            for (size_t k = 0; k < 3; k++)
+            for (size_t k = 0; k < NOMBRE; k++)
             {
-                tabStuctVoiture[k].temps = realloc(tabStuctVoiture[k].temps, (compteur + 1) * sizeof(int));
-                if (tabStuctVoiture[k].temps == NULL) {
+                tabStuctVoiture[k].temps_S1 = realloc(tabStuctVoiture[k].temps_S1, (compteur + 1) * sizeof(int));
+                if (tabStuctVoiture[k].temps_S1 == NULL) {
                     perror("Problem realloc() !");
                     exit(EXIT_FAILURE);
                 }
-                tabStuctVoiture[k].temps[compteur] = generateNumber();
-                temps_secteur += tabStuctVoiture[k].temps[compteur];
+                tabStuctVoiture[k].temps_S1[compteur] = generateNumber();
+                tabStuctVoiture[k].tempsTotal += tabStuctVoiture[k].temps_S1[compteur];
             }
             compteur++;
         }
     }
 
 
-    for(size_t i=0; i < 3; i++)
+    printf("%d\n", compteur);
+    printf("%d\n\n", tabStuctVoiture[0].tempsTotal);
+
+    for(size_t i=0; i < NOMBRE; i++)
     {
         for(size_t j = 0; j < compteur; j++)
         {
-        printf("%4d",tabStuctVoiture[i].temps[j]);
+        printf("%4d",tabStuctVoiture[i].temps_S1[j]);
         }
         printf("\n");
     }
+
+
     
     return 0;
 }
@@ -74,10 +89,12 @@ int generateNumber(void){
 
 /*
 
-        printf("%d\n\n", compteur);
+    for(size_t i=0; i < NOMBRE; i++)
+    {
         for(size_t j = 0; j < compteur; j++)
         {
-        printf("%4d",tabStuctVoiture[1].temps[j]);
+        printf("%4d",tabStuctVoiture[i].temps[j]);
         }
         printf("\n");
+    }
 */
