@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define NOMBRE 20 
+#define NUMBER_OF_CARS 1
 
 int generateNumber(int min, int max);
 
 
 typedef struct {
-        /* int numero; */
 
         int *temps_S1;
         int *temps_S2;
@@ -17,143 +16,152 @@ typedef struct {
         int tempsTotal;
 } voiture;
 
-voiture tabStuctVoiture[NOMBRE];
+voiture tabStuctVoiture[NUMBER_OF_CARS];
 
 
-
-int main(void) {
-
-    srand (time(NULL));
+int main(void)
+{
+    srand( time(NULL) );
 
     int cmpAlloc = 0;
-    
+    int numero = 0;
 
-    for (int a = 0; a < NOMBRE; a++) //a = 0    pour acceder au temps total de chaque voiture 
-    {
-        tabStuctVoiture[a].tempsTotal = 0;
 
-        int numero = 0;
-
-        if (tabStuctVoiture[a].tempsTotal == 0 && cmpAlloc == 0)
+        if( (cmpAlloc == 0) && (tabStuctVoiture[0].tempsTotal <= 5400) )
         {
-            /*          S1          */
+            /*   ****       S1     ****     */
             numero = generateNumber(25, 40);
-            tabStuctVoiture[a].tempsTotal += numero;
-
-            tabStuctVoiture[a].temps_S1 = calloc(1, sizeof(int));
-            if (tabStuctVoiture[a].temps_S1 == NULL) {
+            tabStuctVoiture[0].temps_S1 = calloc(1, sizeof(int));
+            if (tabStuctVoiture[0].temps_S1 == NULL) {
                 perror("Problem calloc() !");
                 exit(EXIT_FAILURE);
             }
-            tabStuctVoiture[a].temps_S1[cmpAlloc] = numero;
+            tabStuctVoiture[0].temps_S1[0] = numero;
+            tabStuctVoiture[0].tempsTotal += numero;
+            /* *************************************** */
 
 
-            /*          S2          */
+            /*   ****       S2     ****     */
             numero = generateNumber(25, 40);
-            tabStuctVoiture[a].tempsTotal += numero;
-
-            tabStuctVoiture[a].temps_S2 = calloc(1, sizeof(int));
-            if (tabStuctVoiture[a].temps_S2 == NULL) {
+            tabStuctVoiture[0].temps_S2 = calloc(1, sizeof(int));
+            if (tabStuctVoiture[0].temps_S2 == NULL) {
                 perror("Problem calloc() !");
                 exit(EXIT_FAILURE);
             }
-            tabStuctVoiture[a].temps_S2[cmpAlloc] = numero;
+            tabStuctVoiture[0].temps_S2[0] = numero;
+            tabStuctVoiture[0].tempsTotal += numero;
+            /* *************************************** */
 
 
-            /*          S3          */
+            /*   ****       S3     ****     */
             numero = generateNumber(25, 40);
-            tabStuctVoiture[a].tempsTotal += numero;
-
-            tabStuctVoiture[a].temps_S3 = calloc(1, sizeof(int));
-            if (tabStuctVoiture[a].temps_S3 == NULL) {
+            tabStuctVoiture[0].temps_S3 = calloc(1, sizeof(int));
+            if (tabStuctVoiture[0].temps_S3 == NULL) {
                 perror("Problem calloc() !");
                 exit(EXIT_FAILURE);
             }
-            tabStuctVoiture[a].temps_S3[cmpAlloc] = numero;
+            tabStuctVoiture[0].temps_S3[0] = numero;
+            tabStuctVoiture[0].tempsTotal += numero;
+            /* *************************************** */
 
+
+            cmpAlloc++;
         }
-        cmpAlloc++;
+        
+        if ((cmpAlloc > 0) && (tabStuctVoiture[0].tempsTotal <= 5400)) {
 
-
-        if (tabStuctVoiture[a].tempsTotal > 0 && cmpAlloc > 0)
-        {
-            while (tabStuctVoiture[a].tempsTotal <= 5400)
+            while ((cmpAlloc > 0) && (tabStuctVoiture[0].tempsTotal <= 5400))
             {
-                for (int i = 0; i < NOMBRE; i++)
-                { //BOUCLE QUI FOUE LA MERDE
-                
-                    /*          S1          */
-                    numero = generateNumber(25, 40);
-                    tabStuctVoiture[a].tempsTotal += numero;
-
-                    tabStuctVoiture[a].temps_S1 = realloc(tabStuctVoiture[a].temps_S1, (cmpAlloc + 1) * sizeof(int));
-                    if (tabStuctVoiture[a].temps_S1 == NULL) {
-                        perror("Problem realloc() !");
-                        exit(EXIT_FAILURE);
-                    }
-                    tabStuctVoiture[a].temps_S1[cmpAlloc] = numero;
-
-
-                    /*          S2          */
-                    numero = generateNumber(25, 40);
-                    tabStuctVoiture[a].tempsTotal += numero;
-
-                    tabStuctVoiture[a].temps_S2 = realloc(tabStuctVoiture[a].temps_S2, (cmpAlloc + 1) * sizeof(int));
-                    if (tabStuctVoiture[a].temps_S2 == NULL) {
-                        perror("Problem realloc() !");
-                        exit(EXIT_FAILURE);
-                    }
-                    tabStuctVoiture[a].temps_S2[cmpAlloc] = numero;
-
-
-                    /*          S3          */
-                    numero = generateNumber(25, 40);
-                    tabStuctVoiture[a].tempsTotal += numero;
-
-                    tabStuctVoiture[a].temps_S3 = realloc(tabStuctVoiture[a].temps_S3, (cmpAlloc + 1) * sizeof(int));
-                    if (tabStuctVoiture[a].temps_S3 == NULL) {
-                        perror("Problem realloc() !");
-                        exit(EXIT_FAILURE);
-                    }
-                    tabStuctVoiture[a].temps_S3[cmpAlloc] = numero;
+                if (tabStuctVoiture[0].tempsTotal >= 5400)
+                {
+                    break;
                 }
-                cmpAlloc++;
+                /*   ****       S1     ****     */
+                numero = generateNumber(25, 40);
+                tabStuctVoiture[0].temps_S1 = realloc(tabStuctVoiture[0].temps_S1, (cmpAlloc + 1) * sizeof(int));
+                if (tabStuctVoiture[0].temps_S1 == NULL) {
+                    perror("Problem realloc() !");
+                    exit(EXIT_FAILURE);
+                }
+                
+                tabStuctVoiture[0].temps_S1[cmpAlloc] = numero;
+                tabStuctVoiture[0].tempsTotal += numero;
+                /* *************************************** */
 
+
+                if (tabStuctVoiture[0].tempsTotal >= 5400)
+                {
+                    break;
+                }
+                /*   ****       S2     ****     */
+                numero = generateNumber(25, 40);
+                tabStuctVoiture[0].temps_S2 = realloc(tabStuctVoiture[0].temps_S2, (cmpAlloc + 1) * sizeof(int));
+                if (tabStuctVoiture[0].temps_S2 == NULL) {
+                    perror("Problem realloc() !");
+                    exit(EXIT_FAILURE);
+                }
+                
+                tabStuctVoiture[0].temps_S2[cmpAlloc] = numero;
+                tabStuctVoiture[0].tempsTotal += numero;
+                /* *************************************** */
+
+
+                if (tabStuctVoiture[0].tempsTotal >= 5400)
+                {
+                    break;
+                }
+                /*   ****       S3     ****     */
+                numero = generateNumber(25, 40);
+                tabStuctVoiture[0].temps_S3 = realloc(tabStuctVoiture[0].temps_S3, (cmpAlloc + 1) * sizeof(int));
+                if (tabStuctVoiture[0].temps_S3 == NULL) {
+                    perror("Problem realloc() !");
+                    exit(EXIT_FAILURE);
+                }
+                
+                tabStuctVoiture[0].temps_S3[cmpAlloc] = numero;
+                tabStuctVoiture[0].tempsTotal += numero;
+                /* *************************************** */
+
+
+                cmpAlloc++;
             }
+        
+
         }
 
-    }
+        else {
+            printf("probleme !");
+        }
 
-    for (int i = 0; i < NOMBRE; i++)
-    {
-        printf("%d\n", tabStuctVoiture[i].tempsTotal);
-    }
+        
+        
+        /*
+        printf("%d", tabStuctVoiture[0].tempsTotal);
 
+        for (int i = 0; i < 50; i++)
+        {
+            printf("%d\n", tabStuctVoiture[0].temps_S1[i]);
+            printf("%d\n", tabStuctVoiture[0].temps_S2[i]);
+            printf("%d\n", tabStuctVoiture[0].temps_S3[i]);
+        }
+        */
+
+
+
+
+        free(tabStuctVoiture[0].temps_S1);
+        free(tabStuctVoiture[0].temps_S2);
+        free(tabStuctVoiture[0].temps_S3);
+
+
+
+    
 
 
     return 0;
 }
 
-
-
 int generateNumber(int min, int max){
 
     return (rand() % (max - min+1)) + min;
 }
-
-
-
-/*
-    for (int i = 0; i < NOMBRE; i++)
-    {
-        int tempsTotal = 0;
-
-        while (tempsTotal <= 5400)
-        {
-            int numero = generateNumber(25, 40);
-            tempsTotal += numero;
-        }
-        printf("Temps total: %d\n", tempsTotal);
-    }
-
-*/
