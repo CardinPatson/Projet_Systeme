@@ -15,6 +15,9 @@ typedef struct {
         int *tempsS1;
         int *tempsS2;
         int *tempsS3;
+        unsigned int cmp_s1;
+        unsigned int cmp_s2;
+        unsigned int cmpt_s3;
         int tempsTotal;
 } voiture;
 
@@ -46,16 +49,14 @@ int main(int argc , char **argv)
   
 
   //Essaie libre : 1h30 = 5400s
+
+for(int i = 0 ; i <NOMBRE ; i++){
   int temps_secteur1 = 0 ;
   int temps_secteur2 = 0 ;
   int temps_secteur3 = 0 ;
 
   int temps_secteur = 0 ;
   int count_secteur = 1; // PERMET DE SAVOIR SUR QUEL SECTEUR ON SE TROUVE
-
-  int countS1 = 0;
-  int countS2 = 0;
-  int countS3 = 0;
 
   int counts1_total = 1;
   int counts2_total = 1;
@@ -65,6 +66,7 @@ int main(int argc , char **argv)
 
   //PROBLEME LES 20 VOITURES DOIVENT TOURNER EN MEME TEMPS DONC NECESSITE UNE SYNCHRONISATION DE PROCESSUS
 
+  printf("voiture numero %d\n\n" , i);
   while(temps_secteur <= 5400){//1, 2 , 3
 
     if(count_secteur == 1){
@@ -73,15 +75,14 @@ int main(int argc , char **argv)
         temps_secteur += temps_secteur1 ;//necessite un tableau de temps pour arreter chaque voiture a 5400s(un tableau de 20 tableau )
 
         if(counts1_total == 1 ){ 
-          voiture[0].tempsS1 = calloc(1 , sizeof(int));
+          voiture[i].tempsS1 = calloc(1 , sizeof(int));
         }
         else{
-          voiture[0].tempsS1 = realloc(voiture[0].tempsS1 , counts1_total*sizeof(int));
+          voiture[i].tempsS1 = realloc(voiture[i].tempsS1 , counts1_total*sizeof(int));
         }
-        voiture[0].tempsS1[counts1_total-1] = temps_secteur1;
-        //countS1++;
+        voiture[i].tempsS1[counts1_total-1] = temps_secteur1;
 
-        printf("secteur %d parcouru en %d secondes\n" , count_secteur , temps_secteur1) ;
+        printf("s %d -> %d secondes\n" , count_secteur , temps_secteur1) ;
         counts1_total++;
     }
 
@@ -92,15 +93,14 @@ int main(int argc , char **argv)
       temps_secteur += temps_secteur2 ;
 
       if(counts2_total == 1 ){
-        voiture[0].tempsS2 = calloc(1 , sizeof(int));
+        voiture[i].tempsS2 = calloc(1 , sizeof(int));
       }
       else{ 
-        voiture[0].tempsS2 = realloc(voiture[0].tempsS2 , counts2_total*sizeof(int)); 
+        voiture[i].tempsS2 = realloc(voiture[i].tempsS2 , counts2_total*sizeof(int)); 
       }
-      voiture[0].tempsS2[counts2_total-1] = temps_secteur2;
-      //countS2++;
+      voiture[i].tempsS2[counts2_total-1] = temps_secteur2;
 
-      printf("secteur %d parcouru en %d secondes\n" , count_secteur , temps_secteur2) ;
+      printf("s %d -> %d secondes\n" , count_secteur , temps_secteur2) ;
       counts2_total++;
     }
     
@@ -108,39 +108,42 @@ int main(int argc , char **argv)
       temps_secteur3 = generateNumberBetween25_40() ;
       temps_secteur += temps_secteur3 ;
       if(counts3_total == 1 ){
-        voiture[0].tempsS3 = calloc(1 , sizeof(int));
+        voiture[i].tempsS3 = calloc(1 , sizeof(int));
       }
       else{ 
-        voiture[0].tempsS3 = realloc(voiture[0].tempsS3 , counts3_total*sizeof(int)); 
+        voiture[i].tempsS3 = realloc(voiture[i].tempsS3 , counts3_total*sizeof(int)); 
       }
-      voiture[0].tempsS3[counts3_total-1] = temps_secteur3;    
-      //countS3++;
+      voiture[i].tempsS3[counts3_total-1] = temps_secteur3;    
 
-      printf("secteur %d parcouru en %d secondes\n\n" , count_secteur , temps_secteur3);
+      printf("s %d -> %d secondes\n\n" , count_secteur , temps_secteur3);
       counts3_total++;
     }
 
-    //temps_secteur = temps_secteur1 + temps_secteur2 + temps_secteur3;
     count_secteur++;//2 , 3 , 4
     if(count_secteur > 3){
       count_secteur = 1;
     }
   }
+  voiture[i].cmpt1 = counts1_total;
+  voiture[i].cmpt2 = counts2_total;
+  voiture[i].cmpt3 = counts3_total;
+}
   //Test
-  printf("counts1_total --> %d , counts2_total --> %d , counts3_total --> %d" , counts1_total , counts2_total , counts3_total);
-  printf("temps de secteur  total : %d\n\n" , temps_secteur);
-  printf("voiture 0 \n\n");
+  //printf("counts1_total --> %d , counts2_total --> %d , counts3_total --> %d" , counts1_total , counts2_total , counts3_total);
+  //printf("temps de secteur  total : %d\n\n" , temps_secteur);
+  //printf("voiture 0 \n\n");
   
   //TEST TABLEAU TEMPS
+    printf("Test des temps dans les voitures \n\n\n")
   for(int j = 0 ; j<counts1_total ; j++){
     printf("passage numero %d sur le secteur 1  --> %d secondes\n" , j+1 , voiture[0].tempsS1[j]);
   }
   printf ("A number between 25 and 40: %d\n", generateNumberBetween25_40() );
-  printf("A new number between 25 and 40 : %d\n" , generateNumberBetween25_40()) ;
+  printf("A new number between 25 and 40 : %d\n" , generateNumberBetween25_40()) ;*/
   return 0;
 }
 
-
+/**Fonction de conservation de fichier**/
 int saveFile()
 {
   int fd;
