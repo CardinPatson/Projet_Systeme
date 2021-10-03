@@ -66,12 +66,27 @@ int main(void)
         bestTime_circuit[i][1] = tabStuctVoiture[i].temps_circuit_min;
     }
 
-    printf("Best time in circuit for each car:\n\n");
-    for(int x=0; x < NUMBER_OF_CARS; x++) {
+    int temp = 0;
 
-        printf("Voiture: %d ==> min: %d\n\n", bestTime_circuit[x][0], bestTime_circuit[x][1]);
-
+    //Sort the array in ascending order    
+    for (int i = 0; i < 20; i++) {     
+        for (int j = i+1; j < 20; j++) {     
+           if(bestTime_circuit[i][1] > bestTime_circuit[j][1]) {    
+               temp = bestTime_circuit[i][1];    
+               bestTime_circuit[i][1] = bestTime_circuit[j][1];    
+               bestTime_circuit[j][1] = temp;    
+           }     
+        }     
+    }    
+        
+    printf("\n");    
+        
+    //Displaying elements of array after sorting    
+    printf("Best time in circuit for each car ! ascending order: \n");
+    for (int i = 0; i < 20; i++) {     
+        printf("Voiture: %d ==> min: %d\n\n", bestTime_circuit[i][0], bestTime_circuit[i][1]);
     }
+
     printf("**********************************\n");
 
 
