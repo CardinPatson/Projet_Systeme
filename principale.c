@@ -8,7 +8,7 @@
 int faireDesTours(int i, int tempsCircuit);
 int generateNumber(int min, int max);
 int array_min(int *array, int size);
-double convertir_en_seconds(int kiloSecond);
+float convertir_en_seconds(int kiloSecond);
 int addMimTime(int numVoiture, double time_min);
 
 
@@ -61,9 +61,23 @@ int main(void)
         tabStuctVoiture[i].id = numeroVoiture[i]; //chaque voiture à un numéro
         faireDesTours(i, 5400000);
 
+        tabStuctVoiture[i].S1_min = array_min( tabStuctVoiture[i].temps_S1, tabStuctVoiture[i].cmp_S1 );
+        bestTime_S1[i][0] = tabStuctVoiture[i].id;
+        bestTime_S1[i][1] = tabStuctVoiture[i].S1_min;
+
+        tabStuctVoiture[i].S2_min = array_min( tabStuctVoiture[i].temps_S2, tabStuctVoiture[i].cmp_S2 );
+        bestTime_S2[i][0] = tabStuctVoiture[i].id;
+        bestTime_S2[i][1] = tabStuctVoiture[i].S2_min;
+
+        tabStuctVoiture[i].S3_min = array_min( tabStuctVoiture[i].temps_S3, tabStuctVoiture[i].cmp_S3 );
+        bestTime_S3[i][0] = tabStuctVoiture[i].id;
+        bestTime_S3[i][1] = tabStuctVoiture[i].S3_min;
+
+
         tabStuctVoiture[i].temps_circuit_min = array_min( tabStuctVoiture[i].temps_circuit, tabStuctVoiture[i].cmp_temps_circuit );
         bestTime_circuit[i][0] = tabStuctVoiture[i].id;
         bestTime_circuit[i][1] = tabStuctVoiture[i].temps_circuit_min;
+
     }
 
     int temp = 0;
@@ -77,14 +91,14 @@ int main(void)
                bestTime_circuit[j][1] = temp;    
            }     
         }     
-    }    
-        
+    }
+
     printf("\n");    
-        
-    //Displaying elements of array after sorting    
-    printf("Best time in circuit for each car ! ascending order: \n");
-    for (int i = 0; i < 20; i++) {     
-        printf("Voiture: %d ==> min: %d\n\n", bestTime_circuit[i][0], bestTime_circuit[i][1]);
+
+    //Displaying elements of array after sorting
+    printf("\t Best time in circuit for each car ! ascending order: \n\n");
+    for (int i = 0; i < 20; i++) {
+        printf("Voiture: %d | S1: %d | S2: %d | S3: %d => Tour: %f\n\n", bestTime_circuit[i][0], bestTime_S1[i][1], bestTime_S2[i][1], bestTime_S3[i][1], convertir_en_seconds(bestTime_circuit[i][1]));
     }
 
     printf("**********************************\n");
@@ -263,17 +277,15 @@ int array_min(int *array, int size)
 }
 
 
-double convertir_en_seconds(int kiloSecond) {
-    return kiloSecond / 1000.0;
+float convertir_en_seconds(int kiloSecond) {
+
+    kiloSecond = (float) kiloSecond;
+
+    return (kiloSecond / 1000.0);
 }
 
 
-int addMimTime(int numVoiture, double time_min) {
 
-    // sert à rien pour l'instant !!
-
-    return 0;
-}
 
 
 /*
