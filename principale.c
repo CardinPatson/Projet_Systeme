@@ -9,7 +9,6 @@ int faireDesTours(int i, int tempsCircuit);
 int generateNumber(int min, int max);
 int array_min(int *array, int size);
 float convertir_en_seconds(int kiloSecond);
-int addMimTime(int numVoiture, double time_min);
 
 
 int numeroVoiture[NUMBER_OF_CARS] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
