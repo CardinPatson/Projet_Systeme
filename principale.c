@@ -92,15 +92,19 @@ int main(void)
         }     
     }
 
-    printf("\n");    
 
-    //Displaying elements of array after sorting
-    printf("\t Best time in circuit for each car ! ascending order: \n\n");
-    for (int i = 0; i < 20; i++) {
-        printf("Voiture: %d | S1: %d | S2: %d | S3: %d => Tour: %f\n\n", bestTime_circuit[i][0], bestTime_S1[i][1], bestTime_S2[i][1], bestTime_S3[i][1], convertir_en_seconds(bestTime_circuit[i][1]));
+
+    printf("\nMeilleurs temps par secteur et tour complet\n\n");
+    printf("====================================================================\n");
+    printf("|     ID   |      s1     |      s2     |      s3     |     Tour    |\n");
+    printf("|==================================================================|\n");
+    for (int i = 0; i < NUMBER_OF_CARS; i++){
+            printf("|     %2d   |    %4d    |    %4d    |    %4d    |    %4d    |\n", \
+                bestTime_circuit[i][0], \
+                bestTime_S1[i][1], bestTime_S2[i][1], bestTime_S3[i][1], \
+                bestTime_circuit[i][1] );
     }
-
-    printf("**********************************\n");
+    printf("====================================================================\n\n");
 
 
 
@@ -255,11 +259,9 @@ int faireDesTours(int i, int tempsCircuit) {
 }
 
 
-int generateNumber(int min, int max) 
+int generateNumber(int min, int max)
 {
-    int range = (max - min); 
-    int div = RAND_MAX / range;
-    return min + (rand() / div);
+    return rand()%(max-min+1)+min;
 }
 
 
