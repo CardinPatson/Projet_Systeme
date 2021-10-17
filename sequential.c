@@ -35,6 +35,8 @@ typedef struct {
     unsigned int lap;
 
     unsigned int compteurStand;
+
+    unsigned int out;
 } voiture;
 
 voiture tabStuctVoiture[NUMBER_OF_CARS];
@@ -49,9 +51,9 @@ int compare (const void * a, const void * b);
 void initVoiture(int i);
 void sortLap(void);
 unsigned int generateStandStop(void);
-
-unsigned int recupLastDigit(unsigned int digit);
-bool allerStand(unsigned int digit);
+unsigned int getLastDigit(unsigned int digit);
+bool goStand(unsigned int digit);
+bool isOut(int i);
 
 
 
@@ -89,7 +91,7 @@ int faireDesTours( int i ) {
     unsigned int tour_complet;
 
 
-    while ( tabStuctVoiture[i].tempsTotal <= tempsMaxCircuit ) //time pas dépassée
+    while (tabStuctVoiture[i].tempsTotal <= tempsMaxCircuit && isOut(i) == false) //time pas dépassée
     {
         tour_complet = 0;
 
@@ -126,7 +128,7 @@ int faireDesTours( int i ) {
         unsigned int timeSupplementaire = 0;
 
         //si dernier digit ==9 ==> go stand secteur3 + generer le temps sup
-        if (allerStand(tabStuctVoiture[i].s2)) {
+        if (goStand(tabStuctVoiture[i].s2)) {
             tabStuctVoiture[i].compteurStand += 1;
             timeSupplementaire = generateStandStop();
         }
@@ -150,11 +152,6 @@ int faireDesTours( int i ) {
             tabStuctVoiture[i].best_Circuit = tour_complet;
         }
         /* *************************************** */
-
-        if (tabStuctVoiture[i].tempsTotal >= tempsMaxCircuit)
-        {
-            break;
-        }
     }
 
     return 0;
@@ -206,6 +203,10 @@ void initVoiture(int i) {
 
     tabStuctVoiture[i].best_Circuit = 3 * MAX;
     tabStuctVoiture[i].tempsTotal = 0;
+
+    tabStuctVoiture[i].lap = 0;
+    tabStuctVoiture[i].compteurStand = 0;
+    tabStuctVoiture[i].out = false;
 }
 
 
@@ -216,22 +217,20 @@ void sortLap(void) {
 
     for (int i = 1; i < NUMBER_OF_CARS; i++)
     {
-        copyTableau[i].lap = 0;
-
         difference = ( copyTableau[i].best_Circuit - copyTableau[i -1].best_Circuit );
 
         copyTableau[i].lap = difference;
     }
 }
 
-unsigned int recupLastDigit(unsigned int digit) {
+unsigned int getLastDigit(unsigned int digit) {
     return (digit % 10);
 }
 
-bool allerStand(unsigned int digit) {
+bool goStand(unsigned int digit) {
 
     //si 9 il va au stand
-    if(recupLastDigit(digit) == 9) {
+    if(getLastDigit(digit) == 9) {
         return true;
     }
     else {
@@ -240,5 +239,15 @@ bool allerStand(unsigned int digit) {
 }
 
 unsigned int generateStandStop(void){
-    return rand()%(TEMPS_MAX_STAND - TEMPS_MIN_STAND + 1)+ TEMPS_MIN_STAND;
+    return rand() % (TEMPS_MAX_STAND - TEMPS_MIN_STAND + 1) + TEMPS_MIN_STAND;
+}
+
+bool isOut(int i) {
+
+    if(tabStuctVoiture[i].compteurStand > 5) {
+        tabStuctVoiture[i].out = true;
+        return true;
+    }else {
+        return false;
+    }
 }
