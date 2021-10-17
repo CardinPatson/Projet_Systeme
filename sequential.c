@@ -44,6 +44,8 @@ void initVoiture(int i);
 
 int main(void)
 {
+    srand( time(NULL) );
+    
     for (int i = 0; i < NUMBER_OF_CARS; i++)
     {
         tabStuctVoiture[i].id = numeroVoiture[i]; // attribution numéro
@@ -77,7 +79,6 @@ int faireDesTours( int i ) {
     {
         tour_complet = 0;
 
-        srand( time(NULL) );
         /*   ****       S1     ****     */
         tabStuctVoiture[i].s1 = generateNumber();
         if (tabStuctVoiture[i].s1 < tabStuctVoiture[i].best_S1) {
