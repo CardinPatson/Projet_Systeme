@@ -8,8 +8,8 @@
 #define MIN 25000 // time generator
 #define MAX 40000
 
-#define TEMPSMAXSTAND 5
-#define TEMPSMINSTAND 2
+#define TEMPS_MAX_STAND 5000
+#define TEMPS_MIN_STAND 2000
 
 
 int numeroVoiture[NUMBER_OF_CARS] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
@@ -51,11 +51,11 @@ void sortLap(void);
 unsigned int generateStandStop(void);
 
 unsigned int recupLastDigit(unsigned int digit);
-bool allerStand(unsigned int digit, unsigned int i);
+bool allerStand(unsigned int digit);
 
 
 
-        int main(void)
+int main(void)
 {
     srand( time(NULL) );
 
@@ -126,7 +126,7 @@ int faireDesTours( int i ) {
         unsigned int timeSupplementaire = 0;
 
         //si dernier digit ==9 ==> go stand secteur3 + generer le temps sup
-        if (allerStand(tabStuctVoiture[i].s2, i)) {
+        if (allerStand(tabStuctVoiture[i].s2)) {
             tabStuctVoiture[i].compteurStand += 1;
             timeSupplementaire = generateStandStop();
         }
@@ -170,16 +170,18 @@ unsigned int generateNumber(void)
 
 void afficherTableau(void) {
     printf("\n\tMeilleurs temps par tour complet\n");
-    printf("==============================================================================================\n");
-    printf("|     ID   |      s1     |      s2     |      s3     |     Tour    |     LAP     |   Stand   |\n");
-    printf("|============================================================================================|\n");
+    printf(" =============================================================================================\n");
+    printf(" |     ID   |      s1     |      s2     |      s3     |     Tour    |     LAP     |   Stand  |\n");
+    printf(" |===========================================================================================|\n");
     for (int i = 0; i < NUMBER_OF_CARS; i++){
-        printf("|     %2d   |    %5d    |    %5d    |    %5d    |    %6d    |    %4d    |    %2d    |\n", \
+        printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %6d    |    %4d    |    %2d    |\n", \
                 copyTableau[i].id, \
                 copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
-                copyTableau[i].best_Circuit, copyTableau[i].lap, copyTableau[i].compteurStand);
+                copyTableau[i].best_Circuit,\
+                copyTableau[i].lap, \
+                copyTableau[i].compteurStand);
     }
-    printf("=============================================================================================\n\n");
+    printf(" =============================================================================================\n\n");
 }
 
 
@@ -226,8 +228,9 @@ unsigned int recupLastDigit(unsigned int digit) {
     return (digit % 10);
 }
 
-bool allerStand(unsigned int digit, unsigned int i) {
+bool allerStand(unsigned int digit) {
 
+    //si 9 il va au stand
     if(recupLastDigit(digit) == 9) {
         return true;
     }
@@ -237,5 +240,5 @@ bool allerStand(unsigned int digit, unsigned int i) {
 }
 
 unsigned int generateStandStop(void){
-    return rand()%(TEMPSMAXSTAND - TEMPSMINSTAND + 1)+ TEMPSMINSTAND;
+    return rand()%(TEMPS_MAX_STAND - TEMPS_MIN_STAND + 1)+ TEMPS_MIN_STAND;
 }
