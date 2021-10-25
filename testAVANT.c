@@ -26,13 +26,7 @@ typedef struct {
     unsigned int s2;
     unsigned int s3;
 
-
     unsigned int tempsTotal;
-
-
-    unsigned int best_S1;
-    unsigned int best_S2;
-    unsigned int best_S3;
 
     unsigned int best_Circuit;
 
@@ -54,7 +48,10 @@ typedef struct {
     unsigned int best_S3;
 
     unsigned int best_Circuit;
-} winner;
+} meilleur;
+
+meilleur petitTest;
+
 
 
 
@@ -93,7 +90,6 @@ int main(void)
     /**********************************************************
      *               Création des fils/voitures               *
      **********************************************************/
-
     for (int i = 0; i < NUMBER_OF_CARS; ++i)
     {
         /********  échec du fork *********/
@@ -107,14 +103,14 @@ int main(void)
         if(pid == 0) {
             shared_memory[i].id = numeroVoiture[i]; //chaque voiture à un numéro
             faireDesTours(i); //5400000
-
-            //exit(EXIT_SUCCESS);
+            exit(EXIT_FAILURE);
         }
 
 
         /********  le pere *********/
         else {
                 wait(NULL);
+
                 system("clear");
 
                 // copy of array
@@ -126,7 +122,7 @@ int main(void)
 
                 afficherTableau();
 
-                sleep(0);
+                sleep(1);
 
                 //break;
         }
@@ -140,7 +136,7 @@ int main(void)
     /********  Supprimer la mémoire partagée  *********/
     shmctl(segment_id, IPC_RMID, NULL);
 
-    //savedFile();
+    savedFile();
 
 
     exit(EXIT_SUCCESS);
@@ -148,15 +144,13 @@ int main(void)
 
 
 
-unsigned int tempsMaxCircuit = 540000;
+unsigned int tempsMaxCircuit = 5400000;
 
 int faireDesTours( int i ) {
 
     initVoiture(i);
 
-
     unsigned int tour_complet;
-
 
     while (shared_memory[i].tempsTotal <= tempsMaxCircuit && isOut(i) == false) //time pas dépassée
     {
@@ -166,8 +160,8 @@ int faireDesTours( int i ) {
 
         /*   ****       S1     ****     */
         shared_memory[i].s1 = generateNumber();
-        if (shared_memory[i].s1 < shared_memory[i].best_S1) {
-            shared_memory[i].best_S1 = shared_memory[i].s1;
+        if (shared_memory[i].s1 < petitTest.best_S1) {
+            petitTest.best_S1 = shared_memory[i].s1;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s1;
         tour_complet += shared_memory[i].s1;
@@ -179,8 +173,8 @@ int faireDesTours( int i ) {
         }
         /*   ****       S2     ****     */
         shared_memory[i].s2 = generateNumber();
-        if (shared_memory[i].s2 < shared_memory[i].best_S2) {
-            shared_memory[i].best_S2 = shared_memory[i].s2;
+        if (shared_memory[i].s2 < petitTest.best_S2) {
+            petitTest.best_S2 = shared_memory[i].s2;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s2;
         tour_complet += shared_memory[i].s2;
@@ -196,7 +190,7 @@ int faireDesTours( int i ) {
         // si il va rentre au stand
         unsigned int timeSupplementaire = 0;
 
-        //si dernier digit ==9 ==> go stand secteur3 + generer le temps sup
+        //si dernier digit == 9 ==> go stand secteur3 + generer le temps sup
         if (goStand(shared_memory[i].s2)) {
             shared_memory[i].compteurStand += 1;
             timeSupplementaire = generateStandStop();
@@ -208,8 +202,8 @@ int faireDesTours( int i ) {
         /*   ****       S3     ****     */
         shared_memory[i].s3 = generateNumber();
         shared_memory[i].s3 += timeSupplementaire;
-        if (shared_memory[i].s3 < shared_memory[i].best_S3) {
-            shared_memory[i].best_S3 = shared_memory[i].s3;
+        if (shared_memory[i].s3 < petitTest.best_S3) {
+            petitTest.best_S3 = shared_memory[i].s3;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s3;
         tour_complet += shared_memory[i].s3;
@@ -219,6 +213,7 @@ int faireDesTours( int i ) {
         /*   ****       Best Time Circuit     ****     */
         if (tour_complet < shared_memory[i].best_Circuit) {
             shared_memory[i].best_Circuit = tour_complet;
+            petitTest.best_Circuit = tour_complet;
         }
         /* *************************************** */
     }
@@ -266,9 +261,9 @@ void initVoiture(int i) {
     shared_memory[i].s2 = 0;
     shared_memory[i].s3 = 0;
 
-    shared_memory[i].best_S1 = MAX;
-    shared_memory[i].best_S2 = MAX;
-    shared_memory[i].best_S3 = MAX;
+    petitTest.best_S1 = MAX;
+    petitTest.best_S2 = MAX;
+    petitTest.best_S3 = MAX;
 
     shared_memory[i].best_Circuit = 3 * MAX;
     shared_memory[i].tempsTotal = 0;
@@ -286,7 +281,7 @@ void sortLap(void) {
 
     for (int i = 1; i < NUMBER_OF_CARS; i++)
     {
-        difference = ( copyTableau[i].best_Circuit - copyTableau[i -1].best_Circuit );
+        difference = ( copyTableau[i].best_Circuit - copyTableau[i - 1].best_Circuit );
 
         copyTableau[i].lap = difference;
     }
