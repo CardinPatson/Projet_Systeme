@@ -126,10 +126,9 @@ int main(void)
 
                 afficherTableau();
 
-                sleep(1);
+                sleep(0);
 
                 //break;
-
         }
 
     }
@@ -141,7 +140,7 @@ int main(void)
     /********  Supprimer la mémoire partagée  *********/
     shmctl(segment_id, IPC_RMID, NULL);
 
-    savedFile();
+    //savedFile();
 
 
     exit(EXIT_SUCCESS);
@@ -149,7 +148,7 @@ int main(void)
 
 
 
-unsigned int tempsMaxCircuit = 5400000;
+unsigned int tempsMaxCircuit = 540000;
 
 int faireDesTours( int i ) {
 
@@ -339,21 +338,16 @@ bool savedFile(void) {
 }
 
 /*
-
 pid_t pid = fork();
 if (pid == -1) {
 perror("fork failed !");
 exit(EXIT_FAILURE);
 }
-
-
 if(pid == 0) {
 shared_memory[i].id = numeroVoiture[i]; //chaque voiture à un numéro
 faireDesTours(i); //5400000
-
 exit(EXIT_SUCCESS);
 }
-
 else {
 wait(NULL);
 }
