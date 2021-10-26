@@ -16,6 +16,7 @@
 #define TEMPS_MIN_STAND 2000
 
 
+
 int numeroVoiture[NUMBER_OF_CARS] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
 
 typedef struct {
@@ -37,7 +38,7 @@ typedef struct {
     unsigned int out;
 } voiture;
 
-voiture *shared_memory;
+voiture *shared_memory; //tableau de structure
 voiture copyTableau[NUMBER_OF_CARS];
 
 
@@ -66,12 +67,12 @@ unsigned int getLastDigit(unsigned int digit);
 bool goStand(unsigned int digit);
 bool isOut(int i);
 bool savedFile(void);
-
-
+int lancement(void);
 
 int main(void)
 {
-    /***************************************************
+  
+     /***************************************************
     *           Création de la mémoire partagée        *
     ****************************************************/
     int segment_id = shmget(IPC_PRIVATE, sizeof(voiture) * NUMBER_OF_CARS, 0666 | IPC_CREAT);
@@ -85,13 +86,46 @@ int main(void)
         perror("shmat() failed !");
         exit(EXIT_FAILURE);
     }
-
-
+   
+    
     /**********************************************************
      *               Création des fils/voitures               *
-     **********************************************************/
+     **********************************************************/     
+    
+    // copy of array
+    int compteur = 0;
+    while(true){
+        lancement();
+        if(compteur == 5){
+            break;
+        }
+        compteur++;
+
+    }
+
+    shmdt(shared_memory);
+    /********  Supprimer la mémoire partagée  *********/
+    shmctl(segment_id, IPC_RMID, NULL);
+    
+    /***Sauvegarde du classement***/
+    savedFile();
+    return 0;
+}
+
+unsigned int tempsMaxCircuit = 5400000;
+
+//OPO : ralentir l'exécution de chaque voiture en les affichant au même moment
+//-> Afficher tous au même stade puis faire des tours au même moment
+
+
+//faireDesTours(0)
+
+int lancement(void){
+    
     for (int i = 0; i < NUMBER_OF_CARS; ++i)
-    {
+    {   
+
+        initVoiture(i);//voiture[0]
         /********  échec du fork *********/
         pid_t pid = fork();
         if (pid == -1) {
@@ -101,64 +135,35 @@ int main(void)
 
         /********  le fils *********/
         if(pid == 0) {
+
             shared_memory[i].id = numeroVoiture[i]; //chaque voiture à un numéro
-            faireDesTours(i); //5400000
-        }
-
-
-        /********  le pere *********/
-        else {
-                wait(NULL);
-                system("clear");
-
-                // copy of array
-                memcpy( copyTableau, shared_memory, sizeof(copyTableau) );
-
-                //trier Tableau;
-                qsort( copyTableau, NUMBER_OF_CARS, sizeof(voiture), compare );
-                sortLap();
-
-                afficherTableau();
-
-                sleep(1);
-
-                //break;
-        }
-
+            faireDesTours(i); //540000
+            printf("Nombre de fils %d"  ,  i );
+            exit(0);
+           
+        }       
+    
+        int wstatus;
+        waitpid(pid , &wstatus ,  WUNTRACED | WCONTINUED);
+       
     }
 
-
-    /********  Détachament des segments de mémoire  *********/
-    shmdt(shared_memory);
-
-    /********  Supprimer la mémoire partagée  *********/
-    shmctl(segment_id, IPC_RMID, NULL);
-
-    savedFile();
-
-
-    exit(EXIT_SUCCESS);
+    afficherTableau();
+    sleep(3);
 }
-
-
-
-unsigned int tempsMaxCircuit = 5400000;
 
 int faireDesTours( int i ) {
 
-    initVoiture(i);
-
     unsigned int tour_complet;
-
+    
     while (shared_memory[i].tempsTotal <= tempsMaxCircuit && isOut(i) == false) //time pas dépassée
     {
         tour_complet = 0;
-
         srand(time(NULL) + getpid());
 
         /*   ****       S1     ****     */
         shared_memory[i].s1 = generateNumber();
-        if (shared_memory[i].s1 < petitTest.best_S1) {
+        if (shared_memory[i].s1 <= petitTest.best_S1) {
             petitTest.best_S1 = shared_memory[i].s1;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s1;
@@ -171,7 +176,7 @@ int faireDesTours( int i ) {
         }
         /*   ****       S2     ****     */
         shared_memory[i].s2 = generateNumber();
-        if (shared_memory[i].s2 < petitTest.best_S2) {
+        if (shared_memory[i].s2 <= petitTest.best_S2) {
             petitTest.best_S2 = shared_memory[i].s2;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s2;
@@ -186,21 +191,25 @@ int faireDesTours( int i ) {
         /*   ****       aller au Stand     ****     */
 
         // si il va rentre au stand
-        unsigned int timeSupplementaire = 0;
-
+        shared_memory[i].s3 = generateNumber();
         //si dernier digit == 9 ==> go stand secteur3 + generer le temps sup
         if (goStand(shared_memory[i].s2)) {
+            unsigned int timeSupplementaire = 0;
             shared_memory[i].compteurStand += 1;
             timeSupplementaire = generateStandStop();
+            shared_memory[i].s3 += timeSupplementaire;
+            shared_memory[i].compteurStand++;
+            isOut(i);
+            
         }
         /* *************************************** */
 
-
+        
+        
 
         /*   ****       S3     ****     */
-        shared_memory[i].s3 = generateNumber();
-        shared_memory[i].s3 += timeSupplementaire;
-        if (shared_memory[i].s3 < petitTest.best_S3) {
+        
+        if (shared_memory[i].s3 <= petitTest.best_S3) {
             petitTest.best_S3 = shared_memory[i].s3;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s3;
@@ -215,7 +224,8 @@ int faireDesTours( int i ) {
         }
         /* *************************************** */
     }
-
+    
+    
     return 0;
 }
 
@@ -228,10 +238,21 @@ unsigned int generateNumber(void)
 
 
 void afficherTableau(void) {
+    
+    system("clear");
+    memcpy( copyTableau, shared_memory, sizeof(copyTableau) );
+    
+    //trier Tableau;
+    qsort( copyTableau, NUMBER_OF_CARS, sizeof(voiture), compare );
+    sortLap();
+
+    
+    
     printf("\n\tMeilleurs temps par tour complet\n");
     printf(" =============================================================================================\n");
     printf(" |     ID   |      s1     |      s2     |      s3     |     Tour    |     LAP     |   Stand  |\n");
     printf(" |===========================================================================================|\n");
+    
     for (int i = 0; i < NUMBER_OF_CARS; i++){
         printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %6d    |    %5d    |    %2d    | %5d\n", \
                 copyTableau[i].id, \
@@ -243,6 +264,15 @@ void afficherTableau(void) {
     printf(" =============================================================================================\n\n");
 
     printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d", petitTest.best_S1, petitTest.best_S2, petitTest.best_S3, petitTest.best_Circuit );
+
+    sleep(1);
+        
+        // lancement();
+        // temps=clock();
+        // printf("Temps clock" , temps);
+        // if(temps > 300000000000 ){
+        //     return ;    
+        // }
 }
 
 
@@ -287,14 +317,14 @@ void sortLap(void) {
     }
 }
 
-unsigned int getLastDigit(unsigned int digit) {
-    return (digit % 10);
-}
+// unsigned int getLastDigit(unsigned int digit) {
+//     return (digit % 10);
+// }
 
 bool goStand(unsigned int digit) {
 
     //si 9 il va au stand
-    if(getLastDigit(digit) == 9) {
+    if(digit%10 == 9) {
         return true;
     }
     else {
@@ -331,19 +361,3 @@ bool savedFile(void) {
 
     return true;
 }
-
-/*
-pid_t pid = fork();
-if (pid == -1) {
-perror("fork failed !");
-exit(EXIT_FAILURE);
-}
-if(pid == 0) {
-shared_memory[i].id = numeroVoiture[i]; //chaque voiture à un numéro
-faireDesTours(i); //5400000
-exit(EXIT_SUCCESS);
-}
-else {
-wait(NULL);
-}
-*/
