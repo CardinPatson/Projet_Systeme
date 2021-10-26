@@ -86,14 +86,9 @@ int main(void)
         perror("shmat() failed !");
         exit(EXIT_FAILURE);
     }
-   
-    
-    /**********************************************************
-     *               Création des fils/voitures               *
-     **********************************************************/     
-    
-    // copy of array
+
     int compteur = 0;
+    
     while(true){
         lancement();
         if(compteur == 5){
@@ -104,6 +99,7 @@ int main(void)
     }
 
     shmdt(shared_memory);
+
     /********  Supprimer la mémoire partagée  *********/
     shmctl(segment_id, IPC_RMID, NULL);
     
@@ -121,6 +117,10 @@ unsigned int tempsMaxCircuit = 5400000;
 //faireDesTours(0)
 
 int lancement(void){
+
+     /**********************************************************
+     *               Création des fils/voitures               *
+     **********************************************************/     
     
     for (int i = 0; i < NUMBER_OF_CARS; ++i)
     {   
@@ -138,13 +138,16 @@ int lancement(void){
 
             shared_memory[i].id = numeroVoiture[i]; //chaque voiture à un numéro
             faireDesTours(i); //540000
-            printf("Nombre de fils %d"  ,  i );
+
+            /**TEST**/
+            // printf("Nombre de fils %d\n"  ,  i );
+            /**FIN TEST**/
+
             exit(0);
            
         }       
     
-        int wstatus;
-        waitpid(pid , &wstatus ,  WUNTRACED | WCONTINUED);
+        wait(NULL);
        
     }
 
@@ -156,10 +159,10 @@ int faireDesTours( int i ) {
 
     unsigned int tour_complet;
     
-    while (shared_memory[i].tempsTotal <= tempsMaxCircuit && isOut(i) == false) //time pas dépassée
+    srand(time(NULL) + getpid());
+    while (shared_memory[i].tempsTotal <= tempsMaxCircuit && !shared_memory[i].out) //time pas dépassée
     {
         tour_complet = 0;
-        srand(time(NULL) + getpid());
 
         /*   ****       S1     ****     */
         shared_memory[i].s1 = generateNumber();
@@ -194,19 +197,26 @@ int faireDesTours( int i ) {
         shared_memory[i].s3 = generateNumber();
         //si dernier digit == 9 ==> go stand secteur3 + generer le temps sup
         if (goStand(shared_memory[i].s2)) {
-            unsigned int timeSupplementaire = 0;
-            shared_memory[i].compteurStand += 1;
+
+    
+            unsigned int timeSupplementaire ;
+    
+            shared_memory[i].compteurStand++;
+    
             timeSupplementaire = generateStandStop();
             shared_memory[i].s3 += timeSupplementaire;
-            shared_memory[i].compteurStand++;
+
+
+            /**TEST**/
+
+            // printf("digit de s2 --> %d" ,shared_memory[i].s2);
+            // printf("compteur Stand -->%d\n\n" , shared_memory[i].compteurStand);
+            
+            /**FIN TEST**/
             isOut(i);
             
         }
         /* *************************************** */
-
-        
-        
-
         /*   ****       S3     ****     */
         
         if (shared_memory[i].s3 <= petitTest.best_S3) {
@@ -235,46 +245,6 @@ unsigned int generateNumber(void)
 {
     return rand()%(MAX-MIN+1)+MIN;
 }
-
-
-void afficherTableau(void) {
-    
-    system("clear");
-    memcpy( copyTableau, shared_memory, sizeof(copyTableau) );
-    
-    //trier Tableau;
-    qsort( copyTableau, NUMBER_OF_CARS, sizeof(voiture), compare );
-    sortLap();
-
-    
-    
-    printf("\n\tMeilleurs temps par tour complet\n");
-    printf(" =============================================================================================\n");
-    printf(" |     ID   |      s1     |      s2     |      s3     |     Tour    |     LAP     |   Stand  |\n");
-    printf(" |===========================================================================================|\n");
-    
-    for (int i = 0; i < NUMBER_OF_CARS; i++){
-        printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %6d    |    %5d    |    %2d    | %5d\n", \
-                copyTableau[i].id, \
-                copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
-                copyTableau[i].best_Circuit,\
-                copyTableau[i].lap, \
-                copyTableau[i].compteurStand, copyTableau[i].tempsTotal);
-    }
-    printf(" =============================================================================================\n\n");
-
-    printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d", petitTest.best_S1, petitTest.best_S2, petitTest.best_S3, petitTest.best_Circuit );
-
-    sleep(1);
-        
-        // lancement();
-        // temps=clock();
-        // printf("Temps clock" , temps);
-        // if(temps > 300000000000 ){
-        //     return ;    
-        // }
-}
-
 
 
 int compare(const void * a, const void * b)
@@ -317,13 +287,9 @@ void sortLap(void) {
     }
 }
 
-// unsigned int getLastDigit(unsigned int digit) {
-//     return (digit % 10);
-// }
 
 bool goStand(unsigned int digit) {
 
-    //si 9 il va au stand
     if(digit%10 == 9) {
         return true;
     }
@@ -339,10 +305,42 @@ unsigned int generateStandStop(void){
 bool isOut(int i) {
     if(shared_memory[i].compteurStand > 5) {
         shared_memory[i].out = true;
-        return true;
-    }else {
-        return false;
     }
+}
+
+
+void afficherTableau() {
+    
+    system("clear");
+    
+    // copy of array    
+
+    memcpy( copyTableau, shared_memory, sizeof(copyTableau) );
+    
+    //trier Tableau;
+    qsort( copyTableau, NUMBER_OF_CARS, sizeof(voiture), compare );
+    sortLap();
+
+    
+    printf("\n\tMeilleurs temps par tour complet\n");
+    printf(" =============================================================================================\n");
+    printf(" |     ID   |      s1     |      s2     |      s3     |     Tour    |     LAP     |   Stand  |\n");
+    printf(" |===========================================================================================|\n");
+    
+    for (int i = 0; i < NUMBER_OF_CARS; i++){
+        printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %6d    |    %5d    |    %2d    | %5d\n", \
+                copyTableau[i].id, \
+                copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
+                copyTableau[i].best_Circuit,\
+                copyTableau[i].lap, \
+                copyTableau[i].compteurStand, copyTableau[i].tempsTotal);
+    }
+    printf(" =============================================================================================\n\n");
+
+    printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d", petitTest.best_S1, petitTest.best_S2, petitTest.best_S3, petitTest.best_Circuit );
+
+    sleep(0.5);
+    
 }
 
 
