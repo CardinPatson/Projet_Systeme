@@ -245,18 +245,18 @@ int faireDesTours( int i  , int compteur) {
     ///Le temps sera divisais en 5 : creer un tamps max 
     /**TEST = AFFICHE UNE VOITURE A LA FOIS**/
     //Idee au lancement tous les processus font dabord 1 080 000 secondes puis on regenere encore pour
-    
+    shared_memory[i].tempsTotalComplet += shared_memory[i].tempsTotal;
     //1.Definir un temps pendant lequel on relève tous les ddépassement de chaque voiture
     /**FIN TEST**/
-    reloadVoiture(i , shared_memory[i].s1 ,shared_memory[i].s2,shared_memory[i].s3 ,petitTest.best_S1 , petitTest.best_S2 , petitTest.best_S3 ,shared_memory[i].best_Circuit, shared_memory[i].lap ,shared_memory[i].compteurStand );
+    // reloadVoiture(i , shared_memory[i].s1 ,shared_memory[i].s2,shared_memory[i].s3 ,petitTest.best_S1 , petitTest.best_S2 , petitTest.best_S3 ,shared_memory[i].best_Circuit, shared_memory[i].lap ,shared_memory[i].compteurStand );
     return 0;
 }
 int faireDesToursComplet(int i){
      faireDesTours(i ,compteurDepassement);
      if(i == 19){
-        while(compteurDepassement<10){
+        while(compteurDepassement<9){
             
-            for(int j = 0 ; j < NUMBER_OF_CARS -1 ; j++){
+            for(int j = 0 ; j < NUMBER_OF_CARS ; j++){
                 faireDesTours(j , compteurDepassement);
             }
             sleep(1);
