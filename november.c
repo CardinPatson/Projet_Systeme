@@ -18,7 +18,9 @@
 
 int numeroVoiture[NUMBER_OF_CARS] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
 
-
+typedef struct{
+    unsigned int number_of_cars;
+}Circuit;
 typedef struct {
 
     unsigned int id;
@@ -36,11 +38,12 @@ typedef struct {
     unsigned int compteurStand;
 
     unsigned int isOut;
+    unsigned int finish;
 } voiture;
 
 voiture *shared_memory; //tableau de structure
 voiture copyTableau[NUMBER_OF_CARS];
-
+Circuit circuit;
 
 
 typedef struct {
@@ -66,6 +69,7 @@ unsigned int generateStandStop(void);
 bool goStand(unsigned int digit);
 void goOut(int i);
 int lancement(void);
+int finished(void);
 
 
 
@@ -122,13 +126,14 @@ int lancement(void)
             exit(EXIT_SUCCESS);
         }
 
-        wait(NULL);
+        
     }
 
-    afficherTableau();
+    afficherTableau(); //faire le while a l'interieur de la boucle
     exit(EXIT_SUCCESS);
 }
 
+//changer les intervalles pour le tempsTotal
 int faireDesTours( int i ) {
 
     unsigned int tour_complet;
@@ -148,7 +153,7 @@ int faireDesTours( int i ) {
         /* *************************************** */
 
         if (shared_memory[i].tempsTotal >= tempsMaxCircuit)
-        {
+        { 
             break;
         }
         /*   ****       S2     ****     */
@@ -183,6 +188,7 @@ int faireDesTours( int i ) {
             goOut(i);
 
         }
+        sleep(1);
         /* *************************************** */
         /*   ****       S3     ****     */
 
@@ -199,6 +205,7 @@ int faireDesTours( int i ) {
             shared_memory[i].best_Circuit = tour_complet;
             theBestes.best_Circuit = tour_complet;
         }
+        usleep(80);
         /* *************************************** */
     }
 
@@ -278,29 +285,44 @@ void goOut(int i) {
 
 void afficherTableau() {
 
-    system("clear");
+    while(true){
 
-    memcpy( copyTableau, shared_memory, sizeof(copyTableau) );
+        system("clear");
 
-    qsort(copyTableau, NUMBER_OF_CARS, sizeof(voiture), (__compar_fn_t) compare);
-    sortLap();
+        memcpy( copyTableau, shared_memory, sizeof(copyTableau) );
 
-    printf("\n\tMeilleurs temps par tour complet\n");
-    printf(" =============================================================================================\n");
-    printf(" |     ID   |      s1     |      s2     |      s3     |     Tour    |     LAP     |   Stand  |\n");
-    printf(" |===========================================================================================|\n");
+        qsort(copyTableau, NUMBER_OF_CARS, sizeof(voiture), (__compar_fn_t) compare);
+        sortLap();
 
-    for (int i = 0; i < NUMBER_OF_CARS; i++){
-        printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %6d    |    %5d    |    %2d    | %5d\n", \
-                copyTableau[i].id, \
-                copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
-                copyTableau[i].best_Circuit,\
-                copyTableau[i].lap, \
-                copyTableau[i].compteurStand, copyTableau[i].tempsTotal);
+        printf("\n\tMeilleurs temps par tour complet\n");
+        printf(" =============================================================================================\n");
+        printf(" |     ID   |      s1     |      s2     |      s3     |     Tour    |     LAP     |   Stand  |\n");
+        printf(" |===========================================================================================|\n");
+
+        for (int i = 0; i < NUMBER_OF_CARS; i++){
+            printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %6d    |    %5d    |    %2d    | %5d\n", \
+                    copyTableau[i].id, \
+                    copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
+                    copyTableau[i].best_Circuit,\
+                    copyTableau[i].lap, \
+                    copyTableau[i].compteurStand, copyTableau[i].tempsTotal);
+        }
+        printf(" =============================================================================================\n\n");
+        
+        //si toutes les voitures on terminer la course
+        if(finished()){
+            break;
+        }
+        sleep(1);
+        //printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d", theBestes.best_S1, theBestes.best_S2, theBestes.best_S3, theBestes.best_Circuit );
     }
-    printf(" =============================================================================================\n\n");
-
-    //printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d", theBestes.best_S1, theBestes.best_S2, theBestes.best_S3, theBestes.best_Circuit );
-
-    sleep(2);
 }
+
+int finished() {
+    for (int i = 0; i < NUMBER_OF_CARS; ++i) {
+        if (shared_memory[i].tempsTotal >= tempsMaxCircuit) {
+            return 1;
+        }
+    }
+    return 0;
+}//finir l'affichage pour une voiture qui est out(qui va au stand plus de 10 fois)
