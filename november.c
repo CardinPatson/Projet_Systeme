@@ -18,9 +18,6 @@
 
 int numeroVoiture[NUMBER_OF_CARS] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
 
-typedef struct{
-    unsigned int number_of_cars;
-}Circuit;
 typedef struct {
 
     unsigned int id;
@@ -38,48 +35,45 @@ typedef struct {
     unsigned int compteurStand;
 
     unsigned int isOut;
-    unsigned int finish;
 } voiture;
 
-voiture *shared_memory; //tableau de structure
-voiture copyTableau[NUMBER_OF_CARS];
-Circuit circuit;
+typedef struct{
+
+    char file_name[20];
+    unsigned int session_time;
+    unsigned int total_cars;
 
 
-typedef struct {
+}Session;
 
-    unsigned int best_S1;
-    unsigned int best_S2;
-    unsigned int best_S3;
+Session current_session;
 
-    unsigned int best_Circuit;
-} meilleur;
-
-meilleur theBestes;
+voiture *shared_memory; 
+voiture copyTableau[NUMBER_OF_CARS + 1];
 
 
 
-int faireDesTours(int i);
+int faireDesTours( int i , int tempsMaxCircuit );
 unsigned int generateNumber(void);
-void afficherTableau(void);
+void afficherTableau(int tempsMaxCircuit);
 unsigned int compare (const void * a, const void * b);
 void initVoiture(int i);
 void sortLap(void);
 unsigned int generateStandStop(void);
 bool goStand(unsigned int digit);
 void goOut(int i);
-int lancement(void);
-int finished(void);
+int lancement(int tempsMaxCircuit);
+int finished(int tempsMaxCircuit);
+void initBest(void) ;
 
 
 
-
-int main(void)
+int main(int argc , char *argv[])
 {
     /***************************************************
    *           Création de la mémoire partagée        *
    ****************************************************/
-    int segment_id = shmget(IPC_PRIVATE, sizeof(voiture) * NUMBER_OF_CARS, 0666 | IPC_CREAT);
+    int segment_id = shmget(IPC_PRIVATE, sizeof(voiture) * NUMBER_OF_CARS+1, 0666 | IPC_CREAT);
     if (segment_id == -1) {
         perror("shmget() failed !");
         exit(EXIT_FAILURE);
@@ -90,8 +84,9 @@ int main(void)
         perror("shmat() failed !");
         exit(EXIT_FAILURE);
     }
-
-    lancement();
+    define_session(argc , argv);
+    lancement(5400);
+    lancement(3600);
 
     shmdt(shared_memory);
 
@@ -101,10 +96,9 @@ int main(void)
     return 0;
 }
 
-unsigned int tempsMaxCircuit = 5400;
 
-int lancement(void)
-{
+int lancement(int tempsMaxCircuit )
+{   initBest();
     /**********************************************************
     *               Création des fils/voitures               *
     **********************************************************/
@@ -122,19 +116,19 @@ int lancement(void)
         /********  le fils *********/
         if(pid == 0) {
             shared_memory[i].id = numeroVoiture[i]; //attribution numéro pour chaque voiture
-            faireDesTours(i);
+            faireDesTours(i , tempsMaxCircuit);
             exit(EXIT_SUCCESS);
         }
 
         
     }
 
-    afficherTableau(); //faire le while a l'interieur de la boucle
+    afficherTableau(tempsMaxCircuit); //faire le while a l'interieur de la boucle
     exit(EXIT_SUCCESS);
 }
 
 //changer les intervalles pour le tempsTotal
-int faireDesTours( int i ) {
+int faireDesTours( int i , int tempsMaxCircuit ) {
 
     unsigned int tour_complet;
 
@@ -145,30 +139,30 @@ int faireDesTours( int i ) {
 
         /*   ****       S1     ****     */
         shared_memory[i].s1 = generateNumber();
-        if (shared_memory[i].s1 <= theBestes.best_S1) {
-            theBestes.best_S1 = shared_memory[i].s1;
+        if (shared_memory[i].s1 < shared_memory[20].s1) {
+            shared_memory[20].s1 = shared_memory[i].s1;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s1;
         tour_complet += shared_memory[i].s1;
         /* *************************************** */
 
-        if (shared_memory[i].tempsTotal >= tempsMaxCircuit)
-        { 
-            break;
-        }
+        // if (shared_memory[i].tempsTotal >= tempsMaxCircuit)
+        // { 
+        //     break;
+        // }
         /*   ****       S2     ****     */
         shared_memory[i].s2 = generateNumber();
-        if (shared_memory[i].s2 <= theBestes.best_S2) {
-            theBestes.best_S2 = shared_memory[i].s2;
+        if (shared_memory[i].s2 < shared_memory[20].s2) {
+            shared_memory[20].s2 = shared_memory[i].s2;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s2;
         tour_complet += shared_memory[i].s2;
         /* *************************************** */
 
-        if (shared_memory[i].tempsTotal >= tempsMaxCircuit)
-        {
-            break;
-        }
+        // if (shared_memory[i].tempsTotal >= tempsMaxCircuit)
+        // {
+        //     break;
+        // }
 
         /*   ****       aller au Stand     ****     */
 
@@ -192,8 +186,8 @@ int faireDesTours( int i ) {
         /* *************************************** */
         /*   ****       S3     ****     */
 
-        if (shared_memory[i].s3 <= theBestes.best_S3) {
-            theBestes.best_S3 = shared_memory[i].s3;
+         if (shared_memory[i].s3 < shared_memory[20].s3) {
+            shared_memory[20].s3 = shared_memory[i].s3;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s3;
         tour_complet += shared_memory[i].s3;
@@ -201,9 +195,12 @@ int faireDesTours( int i ) {
 
 
         /*   ****       Best Time Circuit     ****     */
+        if (tour_complet < shared_memory[20].best_Circuit) {
+            shared_memory[20].best_Circuit = tour_complet;
+        }
+        /*   ****       Best Time Circuit     ****     */
         if (tour_complet < shared_memory[i].best_Circuit) {
-            shared_memory[i].best_Circuit = tour_complet;
-            theBestes.best_Circuit = tour_complet;
+             shared_memory[i].best_Circuit = tour_complet;
         }
         usleep(80);
         /* *************************************** */
@@ -217,7 +214,7 @@ int faireDesTours( int i ) {
 
 unsigned int generateNumber(void)
 {
-    return rand()%(MAX-MIN+1)+MIN;
+    return rand() * clock()%(MAX-MIN+1)+MIN;
 }
 
 
@@ -235,10 +232,6 @@ void initVoiture(int i) {
     shared_memory[i].s2 = 0;
     shared_memory[i].s3 = 0;
 
-    theBestes.best_S1 = MAX;
-    theBestes.best_S2 = MAX;
-    theBestes.best_S3 = MAX;
-
     shared_memory[i].best_Circuit = 3 * MAX;
     shared_memory[i].tempsTotal = 0;
 
@@ -248,7 +241,12 @@ void initVoiture(int i) {
 }
 
 
-
+void initBest(void) {
+    shared_memory[20].s1 = MAX;
+    shared_memory[20].s2 = MAX;
+    shared_memory[20].s3 = MAX;
+    shared_memory[20].best_Circuit = 3*MAX;
+}
 void sortLap(void) {
 
     unsigned int difference;
@@ -272,8 +270,9 @@ bool goStand(unsigned int digit) {
     }
 }
 
+
 unsigned int generateStandStop(void){
-    return rand() % (TEMPS_MAX_STAND - TEMPS_MIN_STAND + 1) + TEMPS_MIN_STAND;
+    return rand() * clock() % (TEMPS_MAX_STAND - TEMPS_MIN_STAND + 1) + TEMPS_MIN_STAND;
 }
 
 void goOut(int i) {
@@ -283,7 +282,7 @@ void goOut(int i) {
 }
 
 
-void afficherTableau() {
+void afficherTableau(int tempsMaxCircuit) {
 
     while(true){
 
@@ -309,16 +308,18 @@ void afficherTableau() {
         }
         printf(" =============================================================================================\n\n");
         
+        printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
         //si toutes les voitures on terminer la course
-        if(finished()){
+
+        if(finished(tempsMaxCircuit)){
             break;
         }
         sleep(1);
-        //printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d", theBestes.best_S1, theBestes.best_S2, theBestes.best_S3, theBestes.best_Circuit );
+        
     }
 }
 
-int finished() {
+int finished(int tempsMaxCircuit) {
     for (int i = 0; i < NUMBER_OF_CARS; ++i) {
         if (shared_memory[i].tempsTotal >= tempsMaxCircuit) {
             return 1;
@@ -326,3 +327,82 @@ int finished() {
     }
     return 0;
 }//finir l'affichage pour une voiture qui est out(qui va au stand plus de 10 fois)
+
+
+
+
+
+
+
+/**
+ * Paramètrage de la session courante en fonction des arguments entrées en paramètre
+ * @param argc : nombre d'arguments entrées par l'utilisateur
+ * @param argv : tableau avec les arguments entrées en paramètres
+ */
+void define_session(int argc, char *argv[]){
+    double total_km;    // Variable qui contiendra le total de kilomètres par tour
+
+    // On vérifie si le nombre de paramètres entrées est correcte
+    if (argc < 2 || argc > 4){
+        perror("Invalid Parameter");
+        // write(1, "error: incorrect numbers of arguments, enter [P1, P2, P3, Q1, Q2, Q3, RACE]", sizeof("error: incorrect numbers of arguments, enter [P1, P2, P3, Q1, Q2, Q3, RACE]"));
+        exit(-1);
+    }
+    else if (!strcmp(argv[1], "RACE") && argc == 2){
+        perror("Invalid Parameter");
+        exit(-1);
+    }
+    else if (strcmp(argv[1], "RACE") && argc == 3){
+        perror("Invalid Parameter");
+        exit(-1);
+    }
+
+    sprintf(current_session.file_name, "%s.txt", argv[1]);  // On définiti le nom du fichier à enregistrer
+
+    // Paramètreage de la session en fonction des arguments
+    if (!strcmp(argv[1], "P1") || !strcmp(argv[1], "P2")) {
+        current_session.session_time = 5400;
+        current_session.total_cars = 20;
+    }
+    else if (!strcmp(argv[1], "P3")){
+        current_session.session_time = 3600;
+        current_session.total_cars = 20;
+
+    }
+    else if (!strcmp(argv[1], "Q1")){
+        current_session.session_time = 1080;
+        current_session.total_cars = 20;
+
+    }
+    else if (!strcmp(argv[1], "Q2")){
+        current_session.session_time = 900;
+        current_session.total_cars = 15;
+
+    }
+    else if (!strcmp(argv[1], "Q3")){
+        current_session.session_time = 720;
+        current_session.total_cars = 10;
+
+    }
+    else if (!strcmp(argv[1], "RACE")){
+        total_km = atoi(argv[2]);
+
+        if (!total_km){
+            // write(1, "error: second argument must be an integer", sizeof("error: second argument must be an integer"));
+            perror("error: second argument must be an integer");
+            exit(-1);
+        }
+        else if (total_km > 7.1 && total_km < 3.2){
+            write(1, "error: length of a circuit must be between 3.2 and 7.1 km", sizeof("error: length of a circuit must be between 3.2 and 7.1 km"));
+            exit(-1);
+        }
+
+        current_session.session_time = 7200;
+        current_session.total_cars = 20;
+    }
+    else{
+        write(1, "error: invalid first argument, first argument must be in [P1, P2, P3, Q1, Q2, Q3, RACE]", sizeof("error: invalid first argument, first argument must be in [P1, P2, P3, Q1, Q2, Q3, RACE]"));
+        exit(-1);
+    }
+}
+
