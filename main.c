@@ -7,7 +7,6 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <unistd.h>
-#include <sys/wait.h>
 
 #define NUMBER_OF_CARS 20
 #define MIN 25 // time generator
@@ -36,7 +35,7 @@ typedef struct {
 
     unsigned int isOut;
 
-    bool isFinished ; 
+    bool isFinished ;
 
 } voiture;
 
@@ -51,7 +50,7 @@ typedef struct{
 
 Session current_session;
 
-voiture *shared_memory; 
+voiture *shared_memory;
 voiture copyTableau[NUMBER_OF_CARS + 1];
 
 
@@ -70,7 +69,6 @@ int finished(int tempsMaxCircuit , char **argv);
 void initBest(void) ;
 void define_session(int argc, char *argv[]);
 bool savedFile(char *argv[]);
-bool test_finish(char **argv);
 void check_course(char course[]);
 
 
@@ -97,17 +95,17 @@ int main(int argc , char *argv[])
     define_session(argc , argv);
     lancement(current_session.session_time , argv , course_fini);
 
-   
 
-    
-  
+
+
+
 
     shmdt(shared_memory);
 
     /********  Supprimer la mémoire partagée  *********/
     shmctl(segment_id, IPC_RMID, NULL);
-    
-    
+
+
     return 0;
 }
 
@@ -123,8 +121,6 @@ int lancement(int tempsMaxCircuit , char **argv , bool course_fini)
         /********  échec du fork *********/
         pid_t pid = fork();
 
-        int pids[20];
-
         if (pid == -1) {
             perror("fork failed !");
             exit(EXIT_FAILURE);
@@ -139,13 +135,13 @@ int lancement(int tempsMaxCircuit , char **argv , bool course_fini)
             exit(EXIT_SUCCESS);
 
         }
-        
+
     }
 
-    afficherTableau(current_session.session_time , argv); 
+    afficherTableau(current_session.session_time , argv);
     exit(EXIT_SUCCESS);
-    
-    
+
+
 }
 
 
@@ -153,7 +149,7 @@ int faireDesTours( int i , int tempsMaxCircuit ) {
 
     unsigned int tour_complet;
 
-    
+
 
     srand(time(NULL) + getpid());
     while (shared_memory[i].tempsTotal <= tempsMaxCircuit && !shared_memory[i].isOut) //time pas dépassée
@@ -170,7 +166,7 @@ int faireDesTours( int i , int tempsMaxCircuit ) {
         /* *************************************** */
 
         // if (shared_memory[i].tempsTotal >= tempsMaxCircuit)
-        // { 
+        // {
         //     break;
         // }
         /*   ****       S2     ****     */
@@ -209,7 +205,7 @@ int faireDesTours( int i , int tempsMaxCircuit ) {
         /* *************************************** */
         /*   ****       S3     ****     */
 
-         if (shared_memory[i].s3 < shared_memory[20].s3) {
+        if (shared_memory[i].s3 < shared_memory[20].s3) {
             shared_memory[20].s3 = shared_memory[i].s3;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s3;
@@ -223,7 +219,7 @@ int faireDesTours( int i , int tempsMaxCircuit ) {
         }
         /*   ****       Best Time Circuit     ****     */
         if (tour_complet < shared_memory[i].best_Circuit) {
-             shared_memory[i].best_Circuit = tour_complet;
+            shared_memory[i].best_Circuit = tour_complet;
         }
         usleep(80);
         /* *************************************** */
@@ -305,7 +301,8 @@ void goOut(int i) {
     }
 }
 
-bool course_actif = true;
+
+
 void afficherTableau(int tempsMaxCircuit , char **argv) {
 
     while(true){
@@ -323,7 +320,7 @@ void afficherTableau(int tempsMaxCircuit , char **argv) {
         printf(" |===========================================================================================|\n");
 
         for (int i = 0; i < NUMBER_OF_CARS; i++){
-            printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %6d    |    %5d    |    %2d    | %5d\n", \
+            printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %5d    |    %5d    |    %2d    | %5d\n", \
                     copyTableau[i].id, \
                     copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
                     copyTableau[i].best_Circuit,\
@@ -331,9 +328,9 @@ void afficherTableau(int tempsMaxCircuit , char **argv) {
                     copyTableau[i].compteurStand, copyTableau[i].tempsTotal);
         }
         printf(" =============================================================================================\n\n");
-        
+
         printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
-         
+
         //si toutes les voitures on terminer la course
 
         if(finished(tempsMaxCircuit , argv)){
@@ -341,11 +338,7 @@ void afficherTableau(int tempsMaxCircuit , char **argv) {
             break;
         }
         sleep(1);
-        
     }
-
-    course_actif = false;
-    
 }
 
 int finished(int tempsMaxCircuit , char **argv) {
@@ -354,7 +347,7 @@ int finished(int tempsMaxCircuit , char **argv) {
             return 1;
         }
     }
-    
+
     return 0;
 }
 
@@ -394,11 +387,11 @@ void define_session(int argc, char *argv[]){
         current_session.total_cars = 20;
     }
     else if (!strcmp(argv[1], "P3")){
-    
+
         check_course("./data/P2.txt");
         current_session.session_time = 3600;
         current_session.total_cars = 20;
-     
+
 
     }
     else if (!strcmp(argv[1], "Q1")){
@@ -442,18 +435,19 @@ void define_session(int argc, char *argv[]){
 }
 
 void check_course(char course[]){
-    
-        FILE *file;
-    
-        if (file = fopen(course, "r"))  //Verification de P2.txt
-        {
-            fclose(file);
-        }
-        else{
-            printf("Va faire la course précédente !!");
-            exit(-1);
-            
-        }   
+
+    FILE *file;
+
+    file = fopen(course, "r");
+    if (file)  //Verification de P2.txt
+    {
+        fclose(file);
+    }
+    else{
+        printf("Va faire la course précédente !!");
+        exit(-1);
+
+    }
 
 }
 
@@ -463,7 +457,7 @@ bool savedFile(char *argv[]) {
 
     strcat(fichiertxt  , argv[1]);
     strcat(fichiertxt , ".txt");
-    
+
     FILE *fichier = fopen(fichiertxt, "w");
     if (fichier == NULL) {
         perror("fopen() failed !");
