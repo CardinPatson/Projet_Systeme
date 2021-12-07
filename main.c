@@ -471,7 +471,7 @@ void prepaClassementFinal(void) {
         char line[256];
         int j = 0;
 
-        FILE *fichier = fopen("./data/CLASSEMENT", "w");
+        FILE *fichier = fopen("./data/CLASSEMENT", "a+");
         if (fichier == NULL) {
             perror("fopen() failed !");
             exit(EXIT_FAILURE);
@@ -481,17 +481,17 @@ void prepaClassementFinal(void) {
             j++;
 
             if(i == 0) {
-                if(j >= 0 && j < 10) {
+                if(j >= 0 && j <= 10) {
                     fprintf(fichier, "%s\n", line);
                 }
             }
             if(i == 1){
-                if(j >= 10 && j < 15) {
+                if(j > 10 && j <= 15) {
                     fprintf(fichier, "%s\n", line);
                 }
             }
             if(i == 2){
-                if(j >= 15 && j < 20) {
+                if(j > 15 && j <= 20) {
                     fprintf(fichier, "%s\n", line);
                 }
             }
@@ -500,3 +500,4 @@ void prepaClassementFinal(void) {
         fclose(file);
     }
 }
+
