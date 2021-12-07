@@ -496,8 +496,8 @@ void prepaClassementFinal(void) {
                 }
             }
         }
-        fclose(fichier);
-        fclose(file);
     }
+    fclose(fichier);
+    fclose(file);
 }
 
