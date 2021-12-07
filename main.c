@@ -59,6 +59,7 @@ void check_course(char course[]);
 int modify(unsigned int numberArray[], char course[]);
 void prepa_qualifiedCars(void);
 void prepaClassementFinal(void);
+void removeNewLineChar(char *ptr);
 
 
 unsigned int qualifiedCars[20];
@@ -465,20 +466,21 @@ void prepaClassementFinal(void) {
 
     char arr[NUMBER_OF_STRING][MAX_STRING_SIZE] = {"./data/Q3.txt", "./data/Q2.txt", "./data/Q1.txt"};
 
+    FILE *fichier = fopen("./data/CLASSEMENT", "a+");
+    if (fichier == NULL) {
+        perror("fopen() failed !");
+        exit(EXIT_FAILURE);
+    }
+
     for (int i = 0; i < NUMBER_OF_STRING; i++)
     {
         FILE* file = fopen(arr[i], "r");
         char line[256];
         int j = 0;
 
-        FILE *fichier = fopen("./data/CLASSEMENT", "a+");
-        if (fichier == NULL) {
-            perror("fopen() failed !");
-            exit(EXIT_FAILURE);
-        }
-
         while (fgets(line, sizeof(line), file)) {
             j++;
+            strtok(line,"\n");
 
             if(i == 0) {
                 if(j >= 0 && j <= 10) {
@@ -496,8 +498,16 @@ void prepaClassementFinal(void) {
                 }
             }
         }
+        fclose(file);
     }
     fclose(fichier);
-    fclose(file);
 }
 
+void removeNewLineChar(char *ptr)
+{
+    while((ptr != NULL) && (*ptr != '\n'))
+    {
+        ++ptr;
+    }
+    *ptr = '\0';
+}
