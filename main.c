@@ -7,11 +7,14 @@
 #include <sys/shm.h>
 #include <unistd.h>
 #include <sys/types.h>
+
 #define NUMBER_OF_CARS 20
 #define MIN 25 // time generator
 #define MAX 40
 #define TEMPS_MAX_STAND 25
 #define TEMPS_MIN_STAND 12
+
+
 typedef struct {
     unsigned int id;
     unsigned int s1;
@@ -24,15 +27,20 @@ typedef struct {
     unsigned int isOut;
     bool isFinished ;
 } voiture;
+
+voiture *shared_memory;
+voiture copyTableau[NUMBER_OF_CARS + 1];
+
 typedef struct{
     char file_name[20];
     unsigned int session_time;
     unsigned int total_cars;
     unsigned int qualified;
 }Session;
+
 Session current_session;
-voiture *shared_memory;
-voiture copyTableau[NUMBER_OF_CARS + 1];
+
+
 int faireDesTours( int i , unsigned int tempsMaxCircuit );
 unsigned int generateNumber(void);
 void afficherTableau(unsigned int tempsMaxCircuit , char **argv);
@@ -50,9 +58,10 @@ bool savedFile(char *argv[]);
 void check_course(char course[]);
 int modify(unsigned int numberArray[], char course[]);
 void prepa_qualifiedCars(void);
+void prepaClassementFinal(void);
+
 
 unsigned int qualifiedCars[20];
-
 
 int main(int argc , char *argv[])
 {
@@ -77,6 +86,8 @@ int main(int argc , char *argv[])
     shmctl(segment_id, IPC_RMID, NULL);
     return 0;
 }
+
+
 int lancement(char **argv, const unsigned int* numeroVoiture)
 {   initBest();
     /**********************************************************
@@ -101,6 +112,8 @@ int lancement(char **argv, const unsigned int* numeroVoiture)
     afficherTableau(current_session.session_time , argv);
     exit(EXIT_SUCCESS);
 }
+
+
 int faireDesTours( int i , unsigned int tempsMaxCircuit ) {
     unsigned int tour_complet;
     srand(time(NULL) + getpid());
@@ -164,15 +177,19 @@ int faireDesTours( int i , unsigned int tempsMaxCircuit ) {
     }
     return 0;
 }
+
+
 unsigned int generateNumber(void) {
     return rand() * clock()%(MAX-MIN+1)+MIN;
 }
+
 unsigned int compare(const void * a, const void * b)
 {
     voiture *voitureA = (voiture *)a;
     voiture *voitureB = (voiture *)b;
     return ( voitureA->best_Circuit - voitureB->best_Circuit );
 }
+
 void initVoiture(int i) {
     shared_memory[i].s1 = 0;
     shared_memory[i].s2 = 0;
@@ -184,12 +201,14 @@ void initVoiture(int i) {
     shared_memory[i].isOut = false;
     shared_memory[i].isFinished = false;
 }
+
 void initBest(void) {
     shared_memory[20].s1 = MAX;
     shared_memory[20].s2 = MAX;
     shared_memory[20].s3 = MAX;
     shared_memory[20].best_Circuit = 3*MAX;
 }
+
 void sortLap() {
     unsigned int difference;
     for (int i = 1; i < current_session.total_cars; i++)
@@ -198,6 +217,7 @@ void sortLap() {
         copyTableau[i].lap = difference;
     }
 }
+
 bool goStand(unsigned int digit) {
     if(digit%10 == 9) {
         return true;
@@ -206,14 +226,17 @@ bool goStand(unsigned int digit) {
         return false;
     }
 }
+
 unsigned int generateStandStop(void){
     return rand() * clock() % (TEMPS_MAX_STAND - TEMPS_MIN_STAND + 1) + TEMPS_MIN_STAND;
 }
+
 void goOut(int i) {
     if(shared_memory[i].compteurStand > 19) {
         shared_memory[i].isOut = true;
     }
 }
+
 void afficherTableau(unsigned int tempsMaxCircuit , char **argv) {
     while(true){
         system("clear");
@@ -242,6 +265,7 @@ void afficherTableau(unsigned int tempsMaxCircuit , char **argv) {
         sleep(1);
     }
 }
+
 int finished(unsigned int tempsMaxCircuit) {
     for (int i = 0; i < current_session.total_cars; ++i) {
         if (shared_memory[i].tempsTotal >= tempsMaxCircuit) {
@@ -250,6 +274,7 @@ int finished(unsigned int tempsMaxCircuit) {
     }
     return 0;
 }
+
 /**
  * Paramètrage de la session courante en fonction des arguments entrées en paramètre
  * @param argc : nombre d'arguments entrées par l'utilisateur
@@ -317,6 +342,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         current_session.session_time = 7200;
         current_session.total_cars = 20;
         prepa_qualifiedCars();
+        prepaClassementFinal();
 
         for (int i = 0; i < 20; ++i) {
             printf("%d\n", qualifiedCars[i]);
@@ -328,6 +354,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         exit(-1);
     }
 }
+
 void check_course(char course[]){
     FILE *file;
     file = fopen(course, "r");
@@ -340,6 +367,7 @@ void check_course(char course[]){
         exit(-1);
     }
 }
+
 bool savedFile(char *argv[]) {
     char fichiertxt[] = "./data/";
     strcat(fichiertxt, argv[1]);
@@ -359,8 +387,6 @@ bool savedFile(char *argv[]) {
 
 
 void prepa_qualifiedCars(void) {
-
-    char nameTrue[3][2] = {"Q3", "Q2", "Q1"};
 
     FILE *myFile;
     myFile = fopen("./data/Q3.txt", "r");
@@ -429,4 +455,48 @@ int modify(unsigned int numberArray[], char course[]){
     }
     fclose(myFile);
     return 0;
+}
+
+
+void prepaClassementFinal(void) {
+
+#define NUMBER_OF_STRING 3
+#define MAX_STRING_SIZE 14
+
+    char arr[NUMBER_OF_STRING][MAX_STRING_SIZE] = {"./data/Q3.txt", "./data/Q2.txt", "./data/Q1.txt"};
+
+    for (int i = 0; i < NUMBER_OF_STRING; i++)
+    {
+        FILE* file = fopen(arr[i], "r");
+        char line[256];
+        int j = 0;
+
+        FILE *fichier = fopen("./data/CLASSEMENT", "w");
+        if (fichier == NULL) {
+            perror("fopen() failed !");
+            exit(EXIT_FAILURE);
+        }
+
+        while (fgets(line, sizeof(line), file)) {
+            j++;
+
+            if(i == 0) {
+                if(j >= 0 && j < 10) {
+                    fprintf(fichier, "%s\n", line);
+                }
+            }
+            if(i == 1){
+                if(j >= 10 && j < 15) {
+                    fprintf(fichier, "%s\n", line);
+                }
+            }
+            if(i == 2){
+                if(j >= 15 && j < 20) {
+                    fprintf(fichier, "%s\n", line);
+                }
+            }
+        }
+        fclose(fichier);
+        fclose(file);
+    }
 }
