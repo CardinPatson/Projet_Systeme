@@ -258,7 +258,7 @@ void afficherTableau(unsigned int tempsMaxCircuit , char **argv) {
         }
         printf(" =============================================================================================\n\n");
         printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
-        //si toutes les voitures on terminer la course
+        //si toutes les voitures ont terminé la course
         if(finished(tempsMaxCircuit)){
             savedFile(argv);
             break;
@@ -277,13 +277,13 @@ int finished(unsigned int tempsMaxCircuit) {
 }
 
 /**
- * Paramètrage de la session courante en fonction des arguments entrées en paramètre
- * @param argc : nombre d'arguments entrées par l'utilisateur
- * @param argv : tableau avec les arguments entrées en paramètres
+ * Paramètrage de la session courante en fonction des arguments entrés en paramètre
+ * @param argc : nombre d'arguments entrés par l'utilisateur
+ * @param argv : tableau avec les arguments entrés en paramètre
  */
 void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
     double total_km;    // Variable qui contiendra le total de kilomètres par tour
-    // On vérifie si le nombre de paramètres entrées est correcte
+    // On vérifie si le nombre de paramètres entrés est correct
     if (argc < 2 || argc > 4){
         perror("Invalid Parameter");
         exit(-1);
@@ -297,7 +297,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         exit(-1);
     }
     sprintf(current_session.file_name, "%s.txt", argv[1]);  // On définit le nom du fichier à enregistrer
-    // Paramètreage de la session en fonction des arguments
+    // Paramètrage de la session en fonction des arguments
     if (!strcmp(argv[1], "P1") || !strcmp(argv[1], "P2")) {
         current_session.session_time = 1000; //5400
         current_session.total_cars = 20;
