@@ -33,7 +33,7 @@ bool savedFile(char *argv[]) {
     strcat(fichiertxt, argv[1]);
     strcat(fichiertxt, ".txt");
 
-    int fd = open(fichiertxt, O_WRONLY);
+    int fd = open(fichiertxt, O_WRONLY | O_CREAT);
     if (fd == -1) {
         perror("open() failed !");
         return false;
