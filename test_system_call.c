@@ -27,7 +27,6 @@ bool isRaceExist(char course[]) {
     return true;
 }
 
-
 bool savedFile(char *argv[]) {
     char fichiertxt[20] = "./data/";
     strcat(fichiertxt, argv[1]);
@@ -39,15 +38,12 @@ bool savedFile(char *argv[]) {
         return false;
     }
 
-    char a_ecrire[100];
     for (int i = 0; i < current_session.total_cars; ++i) {
 
-        a_ecrire[i] = copyTableau[i].id;
-    }
-
-    if (write(fd, a_ecrire, strlen(a_ecrire)) == -1){
-        perror("Probleme avec le Write() !");
-        return false;
+        if (write(fd, &copyTableau[i].id, sizeof (copyTableau[i].id)) == -1){
+            perror("Probleme avec le Write() !");
+            return false;
+        }
     }
 
     if(close(fd) == -1) { // on a fini de travailler avec le fichier shell
