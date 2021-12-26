@@ -7,6 +7,8 @@
 #include <sys/shm.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define NUMBER_OF_CARS 20
 #define MIN 25 // time generator
@@ -55,7 +57,7 @@ int finished(unsigned int tempsMaxCircuit);
 void initBest(void) ;
 void define_session(int argc, char *argv[], unsigned int* numeroVoiture);
 bool savedFile(char *argv[]);
-void check_course(char course[]);
+bool check_course(char course[]);
 int modify(unsigned int numberArray[], char course[]);
 void prepa_qualifiedCars(void);
 void prepaClassementFinal(void);
@@ -165,11 +167,11 @@ int faireDesTours( int i , unsigned int tempsMaxCircuit ) {
         shared_memory[i].tempsTotal += shared_memory[i].s3;
         tour_complet += shared_memory[i].s3;
         /* *************************************** */
-        /*   ****       Best Time Circuit     ****     */
+        /*   ****       Best Time Circuit de toutes les voitures     ****     */
         if (tour_complet < shared_memory[20].best_Circuit) {
             shared_memory[20].best_Circuit = tour_complet;
         }
-        /*   ****       Best Time Circuit     ****     */
+        /*   ****       Best Time Circuit de la voiture actuelle     ****     */
         if (tour_complet < shared_memory[i].best_Circuit) {
             shared_memory[i].best_Circuit = tour_complet;
         }
@@ -258,7 +260,7 @@ void afficherTableau(unsigned int tempsMaxCircuit , char **argv) {
         }
         printf(" =============================================================================================\n\n");
         printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
-        //si toutes les voitures ont terminé la course
+        //si toutes les voitures on terminer la course
         if(finished(tempsMaxCircuit)){
             savedFile(argv);
             break;
@@ -277,14 +279,14 @@ int finished(unsigned int tempsMaxCircuit) {
 }
 
 /**
- * Paramètrage de la session courante en fonction des arguments entrés en paramètre
- * @param argc : nombre d'arguments entrés par l'utilisateur
- * @param argv : tableau avec les arguments entrés en paramètre
+ * Paramètrage de la session courante en fonction des arguments entrées en paramètre
+ * @param argc : nombre d'arguments entrées par l'utilisateur
+ * @param argv : tableau avec les arguments entrées en paramètres
  */
 void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
-    double total_km;    // Variable qui contiendra le total de kilomètres par tour
-    // On vérifie si le nombre de paramètres entrés est correct
-    if (argc < 2 || argc > 4){
+    double total_km = 7.004;  // Variable qui contiendra le nombre de km/tour
+    // On vérifie si le nombre de paramètres entrées est correcte
+    if (argc < 2 || argc > 3){
         perror("Invalid Parameter");
         exit(-1);
     }
@@ -297,49 +299,64 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         exit(-1);
     }
     sprintf(current_session.file_name, "%s.txt", argv[1]);  // On définit le nom du fichier à enregistrer
-    // Paramètrage de la session en fonction des arguments
+    // Paramètreage de la session en fonction des arguments
+    // == 0 -> exactement meme que !
     if (!strcmp(argv[1], "P1") || !strcmp(argv[1], "P2")) {
         current_session.session_time = 1000; //5400
         current_session.total_cars = 20;
         current_session.qualified = 20;
     }
     else if (!strcmp(argv[1], "P3")){
-        check_course("./data/P2.txt");
-        current_session.session_time = 1000; //3600
-        current_session.total_cars = 20;
-        current_session.qualified = 20;
+        if (check_course("P2")) {
+            current_session.session_time = 1000; //3600
+            current_session.total_cars = 20;
+            current_session.qualified = 20;
+        }
+        else {
+            printf("Va faire la course précédente !!");
+            exit(-1);
+        }
     }
+
     else if (!strcmp(argv[1], "Q1")){
-        check_course("./data/P3.txt");
-        current_session.session_time = 1080;
-        current_session.total_cars = 20;
-        current_session.qualified = 15;
+        if (check_course("P3")) {
+            current_session.session_time = 1080;
+            current_session.total_cars = 20;
+            current_session.qualified = 15;
+        }
+        else {
+            printf("Va faire la course précédente !!");
+        }
     }
+
     else if (!strcmp(argv[1], "Q2")){
-        check_course("./data/Q1.txt");
-        current_session.session_time = 900;
-        current_session.total_cars = 15;
-        current_session.qualified = 10;
-        modify(numeroVoiture, "./data/Q1.txt");
+        if (check_course("Q1")) {
+            current_session.session_time = 900;
+            current_session.total_cars = 15;
+            current_session.qualified = 10;
+            modify(numeroVoiture, "./data/Q1.txt");
+        }
+        else {
+            printf("Va faire la course précédente !!");
+            exit(-1);
+        }
+
     }
     else if (!strcmp(argv[1], "Q3")){
         //ICI VA MODIFIER !
-        check_course("./data/Q2.txt");
-        current_session.session_time = 720;
-        current_session.total_cars = 10;
-        current_session.qualified = 10;
-        modify(numeroVoiture, "./data/Q2.txt");
+        if (check_course("Q2")) {
+            current_session.session_time = 720;
+            current_session.total_cars = 10;
+            current_session.qualified = 10;
+            modify(numeroVoiture, "./data/Q2.txt");
+        }
+        else {
+            printf("Va faire la course précédente !!");
+            exit(-1);
+        }
     }
     else if (!strcmp(argv[1], "RACE")){
-        total_km = atoi(argv[2]);
-        if (!total_km){
-            perror("error: second argument must be an integer");
-            exit(-1);
-        }
-        else if (total_km > 7.1 && total_km < 3.2){
-            perror("error: length of a circuit must be between 3.2 and 7.1 km");
-            exit(-1);
-        }
+        // add total_km to cuurent_session
         current_session.session_time = 7200;
         current_session.total_cars = 20;
         prepa_qualifiedCars();
@@ -356,21 +373,23 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
     }
 }
 
-void check_course(char course[]){
-    FILE *file;
-    file = fopen(course, "r");
-    if (file)  //Verification de P2.txt
-    {
-        fclose(file);
+bool check_course(char course[]){
+    char destination[20] = "./data/";
+    strcat(destination, course);
+    strcat(destination, ".txt");
+
+    int fd = open(destination, O_RDONLY);
+
+    if (fd ==-1) {
+        return false;
     }
-    else{
-        printf("Va faire la course précédente !!");
-        exit(-1);
-    }
+
+    close(fd);
+    return true;
 }
 
 bool savedFile(char *argv[]) {
-    char fichiertxt[] = "./data/";
+    char fichiertxt[20] = "./data/";
     strcat(fichiertxt, argv[1]);
     strcat(fichiertxt, ".txt");
 
@@ -415,7 +434,6 @@ void prepa_qualifiedCars(void) {
             fscanf(myFile, "%d", &qualifiedCars[i]);
         }
         else{
-
             fscanf(myFile, "%d", &temp[i]);
         }
     }
@@ -458,7 +476,9 @@ int modify(unsigned int numberArray[], char course[]){
     return 0;
 }
 
-
+/*
+ * préparer la grille de départ
+ * */
 void prepaClassementFinal(void) {
 
 #define NUMBER_OF_STRING 3
