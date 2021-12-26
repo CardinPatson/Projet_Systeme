@@ -520,6 +520,10 @@ void prepaClassementFinal(void) {
         }
         fclose(file);
     }
+    for(int i = 0 ; i<20 ; i++ ){
+        fscanf(fichier, "%d" , qualifiedCars[i]);
+        printf("qualified cars -- %d" , qualifiedCars[i]);
+    }
     fclose(fichier);
 }
 
