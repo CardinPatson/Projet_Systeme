@@ -115,7 +115,6 @@ int lancement(char **argv, const unsigned int* numeroVoiture)
             if (strcmp(argv[1], "RACE") == 0){
                 // printf("je suis dans le Race");
                 shared_memory[i].id = qualifiedCars[i];
-                shared_memory[i].nbre_tours = 0;
                 finale(i, NOMBRE_TOURS_FINALE);
                 exit(EXIT_SUCCESS);
             }
@@ -280,6 +279,7 @@ void initVoiture(int i) {
     shared_memory[i].compteurStand = 0;
     shared_memory[i].isOut = false;
     shared_memory[i].isFinished = false;
+    shared_memory[i].nbre_tours = 0;
 }
 
 void initBest(void) {
