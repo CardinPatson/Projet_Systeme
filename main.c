@@ -257,7 +257,7 @@ int finale(sem_t *semaphore, int i , unsigned int nbre_tours_max){
         tour_complet += shared_memory[i].s2;
         sem_post(semaphore);
 
-
+        sem_wait(semaphore);
         /**STAND*/
         shared_memory[i].s3 = generateNumber();
         //si dernier digit == 9 ==> go stand secteur3 + generer le temps sup
@@ -268,7 +268,7 @@ int finale(sem_t *semaphore, int i , unsigned int nbre_tours_max){
             shared_memory[i].s3 += timeSupplementaire;
             goOut(i);
         }
-        sleep(1);
+        usleep(80);
 
         /*   ****       S3     ****     */
         if (shared_memory[i].s3 < shared_memory[20].s3) {
@@ -288,9 +288,11 @@ int finale(sem_t *semaphore, int i , unsigned int nbre_tours_max){
         if (tour_complet < shared_memory[i].best_Circuit) {
             shared_memory[i].best_Circuit = tour_complet;
         }
-        usleep(80);
+        
         /* *************************************** */
         shared_memory[i].nbre_tours++;
+        sem_post(semaphore);
+        sleep(1);
     }
 
     return 0 ;
