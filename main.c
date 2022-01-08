@@ -648,7 +648,7 @@ void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **arg
         }
         printf(" =====================================================================================\n\n");
 
-        printf("bs1: %lf, bs2: %lf, bs3: %lf et b_circuit %lf\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
+        printf("bs1: %.3lf, bs2: %.3lf, bs3: %.3lf et b_circuit %.3lf\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
 
         //SI TOUTES LES VOITURES ONT TERMINER
         if(finished(tempsMaxCircuit , NOMBRE_TOURS_FINALE)){
