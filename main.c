@@ -143,9 +143,9 @@ int main(int argc , char *argv[])
 void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
 
     // VERIFICATION DU NOMBRE DE PARAMETRE ENTREE
-    if (argc < 2 || argc > 3){
-        perror("Invalid Parameter");
-        exit(-1);
+    if (argc != 2){
+        perror("error: Veuillez entrez un des arguments : P1, P2, P3, Q1, Q2, Q3 ou FINALE");
+        exit(EXIT_FAILURE);
     }
 
     //NOM DU FICHIER
@@ -169,7 +169,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         }
         else {
             printf("Va faire la course précédente !!");
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
     }
 
@@ -197,7 +197,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         }
         else {
             printf("Va faire la course précédente !!");
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
 
     }
@@ -215,7 +215,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         }
         else {
             printf("Va faire la course précédente !!");
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
     }
         //FINALE
@@ -230,8 +230,8 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
 
     }
     else{
-        perror("error: veuillez entrer un argument entre P1, P2, P3, Q1, Q2, Q3, FINALE");
-        exit(-1);
+        perror("error: Veuillez entrez un des arguments : P1, P2, P3, Q1, Q2, Q3 ou FINALE");
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -639,7 +639,7 @@ void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **arg
         printf(" |===================================================================================|\n");
         for (int i = 0; i < current_session.total_cars; i++){
             int p = i + 1;
-        printf(" | %2d  |    %2d     |  %.3lf  |  %.3lf  |  %.3lf  |   %.3lf   |  %.3lf  |   %2d    |\n", \
+            printf(" | %2d  |    %2d     |  %.3lf  |  %.3lf  |  %.3lf  |   %.3lf   |  %.3lf  |   %2d    |\n", \
                 p, copyTableau[i].id, \
                 copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
                 copyTableau[i].best_Circuit,\
