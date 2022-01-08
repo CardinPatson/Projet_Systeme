@@ -288,7 +288,7 @@ int finale(sem_t *semaphore, int i , unsigned int nbre_tours_max){
         if (tour_complet < shared_memory[i].best_Circuit) {
             shared_memory[i].best_Circuit = tour_complet;
         }
-        
+
         /* *************************************** */
         shared_memory[i].nbre_tours++;
         sem_post(semaphore);
@@ -605,7 +605,7 @@ void prepaClassementFinal(void) {
 
     char arr[NUMBER_OF_STRING][MAX_STRING_SIZE] = {"./data/Q3.txt", "./data/Q2.txt", "./data/Q1.txt"};
 
-    FILE *fichier = fopen("./data/CLASSEMENT", "a+");
+    FILE *fichier = fopen("./data/CLASSEMENT.txt", "a+");
     if (fichier == NULL) {
         perror("fopen() failed !");
         exit(EXIT_FAILURE);
