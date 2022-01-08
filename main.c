@@ -44,7 +44,7 @@ typedef struct {
 voiture *shared_memory;
 voiture copyTableau[NUMBER_OF_CARS + 1];
 
-//PARAMETRE DE LA COURSE 
+//PARAMETRE DE LA COURSE
 typedef struct{
     char file_name[20];  //FICHIER QUI VA CONTENIR LE CLASSEMENT
     unsigned int session_time;
@@ -117,7 +117,7 @@ int main(int argc , char *argv[])
     sem_init(semaphore, 1, 1);
 
 
-    
+
     lancement(semaphore, argv, numeroVoiture);
 
 
@@ -141,7 +141,7 @@ int main(int argc , char *argv[])
 *****************************************/
 
 void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
-   
+
     // VERIFICATION DU NOMBRE DE PARAMETRE ENTREE
     if (argc < 2 || argc > 3){
         perror("Invalid Parameter");
@@ -149,7 +149,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
     }
 
     //NOM DU FICHIER
-    sprintf(current_session.file_name, "%s.txt", argv[1]);  
+    sprintf(current_session.file_name, "%s.txt", argv[1]);
 
     //SI LE 1ER ARG == P1 || P2
     if (!strcmp(argv[1], "P1") || !strcmp(argv[1], "P2")) {
@@ -158,7 +158,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         current_session.qualified = 20;
     }
 
-    //P3
+        //P3
     else if (!strcmp(argv[1], "P3")){
 
         //CHECKER SI LA COURSE PRECEDENTE EST FAITE
@@ -173,7 +173,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         }
     }
 
-    //Q1
+        //Q1
     else if (!strcmp(argv[1], "Q1")){
         if (check_course("P3")) {
             current_session.session_time = 1080;
@@ -185,7 +185,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
         }
     }
 
-    //Q2
+        //Q2
     else if (!strcmp(argv[1], "Q2")){
         if (check_course("Q1")) {
             current_session.session_time = 900;
@@ -202,9 +202,9 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
 
     }
 
-    //Q3
+        //Q3
     else if (!strcmp(argv[1], "Q3")){
-        
+
         if (check_course("Q2")) {
             current_session.session_time = 720;
             current_session.total_cars = 10;
@@ -218,14 +218,14 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture){
             exit(-1);
         }
     }
-    //FINALE
+        //FINALE
     else if (!strcmp(argv[1], "FINALE")){
-        
+
         current_session.session_time = 7200;
         current_session.total_cars = 20;
 
         //PREPARATION DE LA GRILLE DE DEPART POUR LA FINALE
-       
+
         prepaClassementFinal();
 
     }
@@ -302,19 +302,19 @@ void prepaClassementFinal(void) {
             strtok(line,"\n");
 
             if(i == 0) {
-                //LES 10 PREMIERES line DE Q3 -> CLASSEMENT.txt 
+                //LES 10 PREMIERES line DE Q3 -> CLASSEMENT.txt
                 if(j >= 0 && j <= 10) {
                     fprintf(fichier, "%s\n", line);
                 }
             }
             if(i == 1){
-                //LES 5 DERNIERES line DE Q2 -> CLASSEMENT.txt 
+                //LES 5 DERNIERES line DE Q2 -> CLASSEMENT.txt
                 if(j > 10 && j <= 15) {
                     fprintf(fichier, "%s\n", line);
                 }
             }
             if(i == 2){
-                //LES 5 DERNIERES line DE Q1 -> CLASSEMENT.txt 
+                //LES 5 DERNIERES line DE Q1 -> CLASSEMENT.txt
                 if(j > 15 && j <= 20) {
                     fprintf(fichier, "%s\n", line);
                 }
@@ -345,12 +345,12 @@ void prepaClassementFinal(void) {
  * DEBUT LANCEMENT ET COMPAGNIE
 *****************************************/
 int lancement(sem_t *semaphore, char **argv, const unsigned int* numeroVoiture)
-{   
+{
     //PERMET DE STOCKER LES MEILLEURS DANS UNE CASE SUPPLEMENTAIRE DE LA MEMOIRE PARTAGEE
     initBest();
 
 
-    // CREATION DES FILS 
+    // CREATION DES FILS
     for (int i = 0; i < current_session.total_cars; ++i)
     {
         initVoiture(i);
@@ -412,7 +412,7 @@ void initVoiture(int i) {
 *****************************************/
 int faireDesTours(sem_t *semaphore, int i , unsigned int tempsMaxCircuit ) {
 
-    double tour_complet; //TEMPS SUR S1+S2+S3 
+    double tour_complet; //TEMPS SUR S1+S2+S3
     srand(time(NULL) + getpid());
 
 
@@ -423,7 +423,7 @@ int faireDesTours(sem_t *semaphore, int i , unsigned int tempsMaxCircuit ) {
         sem_wait(semaphore);
         /*   ****       S1     ****     */
         shared_memory[i].s1 = generateNumber();
-        
+
         //SI IL A UN TEMPS < AU MEILLEUR
         if (shared_memory[i].s1 < shared_memory[20].s1) {
             shared_memory[20].s1 = shared_memory[i].s1;
@@ -503,7 +503,7 @@ int finale(sem_t *semaphore, int i , unsigned int nbre_tours_max){
         sem_wait(semaphore);
         /*   ****       S1     ****     */
         shared_memory[i].s1 = generateNumber();
-        
+
         //SI IL A UN TEMPS < AU MEILLEUR
         if (shared_memory[i].s1 < shared_memory[20].s1) {
             shared_memory[20].s1 = shared_memory[i].s1;
@@ -634,21 +634,21 @@ void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **arg
 
         //DISPLAY
         printf("\n\tMeilleurs temps par tour complet\n");
-        printf(" =====================================================================================================================================================\n");
-        printf(" |       ID       |         s1         |         s2          |          s3          |         Tour          |        LAP           |       Stand      |\n");
-        printf(" |====================================================================================================================================================|\n");
-        for (int i = 0; i < current_session.total_cars; i++){ 
-            printf(" |       %2d      |      %5lf      |      %5lf      |      %5lf       |      %5lf        |      %5lf        |      %2d          |\n", \
-                    copyTableau[i].id, \
-                    copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
-                    copyTableau[i].best_Circuit,\
-                    copyTableau[i].lap, \
-                    copyTableau[i].compteurStand);
+        printf(" =====================================================================================\n");
+        printf(" |  P  |  VOITURE  |    S1    |    S2    |    S3    |    TOUR    |   GAP   |  Stand  |\n");
+        printf(" |===================================================================================|\n");
+        for (int i = 0; i < current_session.total_cars; i++){
+        printf(" | %2d  |    %2d     |  %.3lf  |  %.3lf  |  %.3lf  |   %.3lf   |  %.3lf  |   %2d   |\n", \
+                i, copyTableau[i].id, \
+                copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
+                copyTableau[i].best_Circuit,\
+                copyTableau[i].lap, \
+                copyTableau[i].compteurStand);
         }
-        printf(" =====================================================================================================================================================\n\n");
-       
+        printf(" ======================================================================================\n\n");
+
         printf("bs1: %lf, bs2: %lf, bs3: %lf et b_circuit %lf\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
-       
+
         //SI TOUTES LES VOITURES ONT TERMINER
         if(finished(tempsMaxCircuit , NOMBRE_TOURS_FINALE)){
 
@@ -661,7 +661,7 @@ void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **arg
 
 
 void sortLap() {
-    //DIFFERENCE DE TEMPS ENTRE LES VOITURES(SUR LE TEMPS TOTAL) 
+    //DIFFERENCE DE TEMPS ENTRE LES VOITURES(SUR LE TEMPS TOTAL)
     double difference;
     for (int i = 1; i < current_session.total_cars; i++)
     {
@@ -694,7 +694,7 @@ int finished(unsigned int tempsMaxCircuit , int nbre_tours_finale) {
         if (shared_memory[i].tempsTotal >= tempsMaxCircuit) {
             return 1;
         }
-        //FINALE : SI TOUTES LES VOITURES ONT PARCOURUE LE NOMBRE DE TOUR 
+            //FINALE : SI TOUTES LES VOITURES ONT PARCOURUE LE NOMBRE DE TOUR
         else if (shared_memory[i].nbre_tours >= nbre_tours_finale) {
             return 1;
         }
