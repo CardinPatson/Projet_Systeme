@@ -12,21 +12,21 @@
 #include <semaphore.h>
 
 #define NUMBER_OF_CARS 20
-#define MIN 25 // time generator
-#define MAX 40
-#define TEMPS_MAX_STAND 25
-#define TEMPS_MIN_STAND 12
+#define MIN 25.00 // time generator
+#define MAX 40.00
+#define TEMPS_MAX_STAND 25.00
+#define TEMPS_MIN_STAND 12.00
 #define NOMBRE_TOURS_FINALE 45
 
 
 typedef struct {
     unsigned int id;
-    unsigned int s1;
-    unsigned int s2;
-    unsigned int s3;
-    unsigned int tempsTotal;
-    unsigned int best_Circuit;
-    unsigned int lap;
+    double s1;
+    double s2;
+    double s3;
+    double tempsTotal;
+    double best_Circuit;
+    double lap;
     unsigned int compteurStand;
     unsigned int isOut;
     unsigned int nbre_tours;
@@ -46,13 +46,13 @@ typedef struct{
 Session current_session;
 
 
-int faireDesTours(sem_t *semaphore, int i , unsigned int tempsMaxCircuit );
-unsigned int generateNumber(void);
-void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **argv);
-unsigned int compare (const void * a, const void * b);
+int faireDesTours(sem_t *semaphore, int i ,unsigned int tempsMaxCircuit );
+double generateNumber(void);
+void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **argv) ;
+int compare(const void * a, const void * b);
 void initVoiture(int i);
 void sortLap(void);
-unsigned int generateStandStop(void);
+double generateStandStop(void);
 bool goStand(unsigned int digit);
 void goOut(int i);
 int lancement(sem_t *semaphore, char **argv, const unsigned int* numeroVoiture);
@@ -76,6 +76,8 @@ int main(int argc , char *argv[])
     /***************************************************
    *           Création de la mémoire partagée        *
    ****************************************************/
+    define_session(argc , argv, numeroVoiture);
+
     int segment_id = shmget(IPC_PRIVATE, sizeof(voiture) * current_session.total_cars+1, 0666 | IPC_CREAT);
     if (segment_id == -1) {
         perror("shmget() failed !");
@@ -104,7 +106,7 @@ int main(int argc , char *argv[])
     sem_init(semaphore, 1, 1);
 
 
-    define_session(argc , argv, numeroVoiture);
+    
     lancement(semaphore, argv, numeroVoiture);
 
 
@@ -159,7 +161,7 @@ int lancement(sem_t *semaphore, char **argv, const unsigned int* numeroVoiture)
 
 
 int faireDesTours(sem_t *semaphore, int i , unsigned int tempsMaxCircuit ) {
-    unsigned int tour_complet;
+    double tour_complet;
     srand(time(NULL) + getpid());
 
 
@@ -196,7 +198,7 @@ int faireDesTours(sem_t *semaphore, int i , unsigned int tempsMaxCircuit ) {
         shared_memory[i].s3 = generateNumber();
         //si dernier digit == 9 ==> go stand secteur3 + generer le temps sup
         if (goStand(shared_memory[i].s2)) {
-            unsigned int timeSupplementaire ;
+            double timeSupplementaire ;
             shared_memory[i].compteurStand++;
             timeSupplementaire = generateStandStop();
             shared_memory[i].s3 += timeSupplementaire;
@@ -231,7 +233,7 @@ int faireDesTours(sem_t *semaphore, int i , unsigned int tempsMaxCircuit ) {
 
 int finale(sem_t *semaphore, int i , unsigned int nbre_tours_max){
 
-    unsigned int tour_complet;
+    double tour_complet;
     srand(time(NULL) + getpid());
     while (shared_memory[i].nbre_tours <= nbre_tours_max && !shared_memory[i].isOut) //time pas dépassée
     {
@@ -288,7 +290,7 @@ int finale(sem_t *semaphore, int i , unsigned int nbre_tours_max){
         if (tour_complet < shared_memory[i].best_Circuit) {
             shared_memory[i].best_Circuit = tour_complet;
         }
-
+        
         /* *************************************** */
         shared_memory[i].nbre_tours++;
         sem_post(semaphore);
@@ -298,24 +300,39 @@ int finale(sem_t *semaphore, int i , unsigned int nbre_tours_max){
     return 0 ;
 }
 
-unsigned int generateNumber(void) {
-    return rand() * clock()%(MAX-MIN+1)+MIN;
+double generateNumber(void) {
+    float scale = rand() / (float) RAND_MAX;
+    // return MIN + scale * clock()%(MAX-MIN+1);
+    // return MIN + scale * (MAX - MIN);
+
+    // return ((MAX - MIN) * ((float)rand() /  RAND_MAX)) + MIN;
+    double r = random();
+    return (MAX-MIN)*( r / ((double)RAND_MAX + 1 )) + MIN;
 }
 
-unsigned int compare(const void * a, const void * b)
+int compare(const void * a, const void * b)
 {
-    voiture *voitureA = (voiture *)a;
-    voiture *voitureB = (voiture *)b;
-    return ( voitureA->best_Circuit - voitureB->best_Circuit );
+    const voiture *voitureA = (voiture *)a;
+    const voiture *voitureB = (voiture *)b;
+    if (voitureA->best_Circuit == voitureB->best_Circuit){
+        return 0;
+    }
+    else if (voitureA->best_Circuit < voitureB->best_Circuit){
+        return -1;
+    }
+    else{
+        return 1;
+    }
+    // return (int) ( voitureA->best_Circuit - voitureB->best_Circuit );
 }
 
 void initVoiture(int i) {
-    shared_memory[i].s1 = 0;
-    shared_memory[i].s2 = 0;
-    shared_memory[i].s3 = 0;
-    shared_memory[i].best_Circuit = 3 * MAX;
-    shared_memory[i].tempsTotal = 0;
-    shared_memory[i].lap = 0;
+    shared_memory[i].s1 = 0.00;
+    shared_memory[i].s2 = 0.00;
+    shared_memory[i].s3 = 0.00;
+    shared_memory[i].best_Circuit = 3.00 * MAX;
+    shared_memory[i].tempsTotal = 0.00;
+    shared_memory[i].lap = 0.00;
     shared_memory[i].compteurStand = 0;
     shared_memory[i].isOut = false;
     shared_memory[i].isFinished = false;
@@ -330,7 +347,7 @@ void initBest(void) {
 }
 
 void sortLap() {
-    unsigned int difference;
+    double difference;
     for (int i = 1; i < current_session.total_cars; i++)
     {
         difference = ( copyTableau[i].best_Circuit - copyTableau[i - 1].best_Circuit );
@@ -347,8 +364,15 @@ bool goStand(unsigned int digit) {
     }
 }
 
-unsigned int generateStandStop(void){
-    return rand() * clock() % (TEMPS_MAX_STAND - TEMPS_MIN_STAND + 1) + TEMPS_MIN_STAND;
+double generateStandStop(void){
+    // return (float)rand() * clock() % (TEMPS_MAX_STAND - TEMPS_MIN_STAND + 1) + TEMPS_MIN_STAND;
+
+    //  float scale = rand() / (float) RAND_MAX;
+    // // return MIN + scale * clock()%(MAX-MIN+1);
+    // return TEMPS_MIN_STAND + scale * (TEMPS_MAX_STAND - TEMPS_MIN_STAND);
+    // return ((TEMPS_MAX_STAND - TEMPS_MIN_STAND) * ((float)rand() /  RAND_MAX)) + TEMPS_MIN_STAND;
+    double r = random();
+    return (TEMPS_MAX_STAND-TEMPS_MIN_STAND)*( r / ((double)RAND_MAX + 1 )) + TEMPS_MIN_STAND;
 }
 
 void goOut(int i) {
@@ -365,22 +389,22 @@ void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **arg
         memcpy( copyTableau, shared_memory, sizeof(copyTableau) );
         sem_post(semaphore); // fermer la porte
 
-        qsort(copyTableau, current_session.total_cars, sizeof(voiture), (__compar_fn_t) compare);
+        qsort(copyTableau, current_session.total_cars,  sizeof(voiture), compare); // (__compar_fn_t)
         sortLap();
         printf("\n\tMeilleurs temps par tour complet\n");
-        printf(" =============================================================================================\n");
-        printf(" |     ID   |      s1     |      s2     |      s3     |     Tour    |     LAP     |   Stand  |\n");
-        printf(" |===========================================================================================|\n");
-        for (int i = 0; i < current_session.total_cars; i++){
-            printf(" |     %2d   |    %5d    |    %5d    |    %5d    |    %5d    |    %5d    |    %2d    |\n", \
+        printf(" =====================================================================================================================================================\n");
+        printf(" |       ID       |         s1         |         s2          |          s3          |         Tour          |        LAP           |       Stand      |\n");
+        printf(" |====================================================================================================================================================|\n");
+        for (int i = 0; i < current_session.total_cars; i++){ 
+            printf(" |       %2d      |      %5lf      |      %5lf      |      %5lf       |      %5lf        |      %5lf        |      %2d          |\n", \
                     copyTableau[i].id, \
                     copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
                     copyTableau[i].best_Circuit,\
                     copyTableau[i].lap, \
                     copyTableau[i].compteurStand);
         }
-        printf(" =============================================================================================\n\n");
-        printf("bs1: %d, bs2: %d, bs3: %d et b_circuit %d\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
+        printf(" =====================================================================================================================================================\n\n");
+        printf("bs1: %lf, bs2: %lf, bs3: %lf et b_circuit %lf\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
         //si toutes les voitures on terminer la course
         if(finished(tempsMaxCircuit , NOMBRE_TOURS_FINALE)){
             savedFile(argv);
