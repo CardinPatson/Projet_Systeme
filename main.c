@@ -638,8 +638,9 @@ void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **arg
         printf(" |  P  |  VOITURE  |    S1    |    S2    |    S3    |    TOUR    |   GAP   |  Stand  |\n");
         printf(" |===================================================================================|\n");
         for (int i = 0; i < current_session.total_cars; i++){
+            int p = i + 1;
         printf(" | %2d  |    %2d     |  %.3lf  |  %.3lf  |  %.3lf  |   %.3lf   |  %.3lf  |   %2d   |\n", \
-                i, copyTableau[i].id, \
+                p, copyTableau[i].id, \
                 copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
                 copyTableau[i].best_Circuit,\
                 copyTableau[i].lap, \
