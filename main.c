@@ -639,14 +639,14 @@ void afficherTableau(sem_t *semaphore, unsigned int tempsMaxCircuit , char **arg
         printf(" |===================================================================================|\n");
         for (int i = 0; i < current_session.total_cars; i++){
             int p = i + 1;
-        printf(" | %2d  |    %2d     |  %.3lf  |  %.3lf  |  %.3lf  |   %.3lf   |  %.3lf  |   %2d   |\n", \
+        printf(" | %2d  |    %2d     |  %.3lf  |  %.3lf  |  %.3lf  |   %.3lf   |  %.3lf  |   %2d    |\n", \
                 p, copyTableau[i].id, \
                 copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
                 copyTableau[i].best_Circuit,\
                 copyTableau[i].lap, \
                 copyTableau[i].compteurStand);
         }
-        printf(" ======================================================================================\n\n");
+        printf(" =====================================================================================\n\n");
 
         printf("bs1: %lf, bs2: %lf, bs3: %lf et b_circuit %lf\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
 
