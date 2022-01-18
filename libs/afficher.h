@@ -4,5 +4,5 @@ void afficherTableau(Voiture *shared_memory,Voiture *copyTableau, Session curren
 void sortLap(Voiture *copyTableau, Session current_session) ;
 int compare(const void * a, const void * b);
 int finished( Voiture *shared_memory, Session current_session, unsigned int tempsMaxCircuit , int nbre_tours_finale);
-bool savedFile(Voiture *copyTableau,  char *argv , Session current_session);
+int savedFile(Voiture *copyTableau,  char *argv , Session current_session);
 #endif

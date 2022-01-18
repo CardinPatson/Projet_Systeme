@@ -10,6 +10,9 @@
 #include "session.h"
 #include "afficher.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 //NOMBRE DE TOURS POUR LA FINALE
 #define NOMBRE_TOURS_FINALE 45
 
@@ -103,22 +106,46 @@ int finished( Voiture *shared_memory, Session current_session, unsigned int temp
     return 0;
 }
 
-bool savedFile(Voiture *copyTableau,  char *argv , Session current_session) {
+int savedFile(Voiture *copyTableau,  char *argv , Session current_session) {
+  
     char fichiertxt[20] = "../data/";
     strcat(fichiertxt, argv);
     strcat(fichiertxt, ".txt");
 
-    FILE *fichier = fopen(fichiertxt, "w");
-    if (fichier == NULL) {
-        perror("fopen() failed !");
-        exit(EXIT_FAILURE);
+    int myFile ;
+    ssize_t r;
+    mode_t mode = S_IRUSR | S_IWUSR; 
+   
+    if((myFile = open(fichiertxt , O_CREAT,mode)) == -1){
+            perror("open failed");
+            exit(EXIT_FAILURE);
     }
-    for (int i = 0; i < current_session.total_cars; ++i) {
-        fprintf(fichier, "%d\n", copyTableau[i].id);
+    
+    if (close(myFile) < 0) 
+    {
+        perror("Erreur lors du close.");
+        exit(EXIT_FAILURE);  
     }
-    fclose(fichier);
-    return true;
+
+    if ((myFile=open(fichiertxt,O_RDWR,mode)) < 0)
+    {
+        perror("Erreur lors du Open pour écrire dans le fichier");
+        exit(EXIT_FAILURE);    
+    }
+    char buffer[50];
+    char temp[4];
+    for (int i = 0; i < current_session.total_cars; ++i)
+    {   
+        sprintf(temp, "%d\n", copyTableau[i].id);
+        strcat(buffer,temp);
+    }
+    write(myFile , buffer, strlen(buffer));
+    
+    close(myFile);
+    return 0;
 }
+
+
 /******************************
  * FIN AFFICHAGE ET COMPAGNIE
 *******************************/

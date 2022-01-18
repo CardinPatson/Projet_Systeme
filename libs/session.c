@@ -5,6 +5,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "session.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
 #define NUMBER_OF_STRING 3
 #define MAX_STRING_SIZE 15
 
@@ -129,6 +134,35 @@ bool check_course(char course[]){
 
 int modify_classement(unsigned int numberArray[], char course[], Session *current_session){
 
+    // //INSERTION DES LIGNES DU FICHIER COURSE DANS NUMBERARRAY
+    // // FILE *myFile;
+    // // myFile = fopen(course, "r");
+    // int myFile ;
+   
+    // // if (myFile == NULL) {
+    // //     perror("fopen() failed !");
+    // //     exit(EXIT_FAILURE);
+    // // }
+    // if((myFile = open(course , 0)) == -1){
+    //         perror("open failed");
+    //         exit(EXIT_FAILURE);
+    // }
+    // //read file into array
+    // // for (int i = 0; i < current_session->total_cars; i++)
+    // // {   
+    //     // ssize_t r;
+    //     // if((r = read(myFile , numberArray , sizeof(numberArray))) == -1){
+    //     //     printf("error read");
+    //     //     exit(EXIT_FAILURE);
+    //     // }
+        
+    //     // fscanf(myFile, "%d", &numberArray[i]);
+    // // }
+    // //fclose(myFile);
+    // close(myFile);
+    // return 0;
+
+
     //INSERTION DES LIGNES DU FICHIER COURSE DANS NUMBERARRAY
     FILE *myFile;
     myFile = fopen(course, "r");
@@ -207,3 +241,5 @@ void prepaClassementFinal(unsigned int qualifiedCars[] , Session *current_sessio
 /****************************************
  * FIN DEFINE SESSION ET COMPAGNIE
 *****************************************/
+
+//
