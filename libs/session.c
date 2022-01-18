@@ -100,7 +100,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture , unsign
         //FINALE
     else if (!strcmp(argv[1], "FINALE")){
 
-        current_session->session_time = 7200;
+        current_session->session_time = 2200; // 7200
         current_session->total_cars = 20;
 
         //PREPARATION DE LA GRILLE DE DEPART POUR LA FINALE
@@ -133,36 +133,6 @@ bool check_course(char course[]){
 
 
 int modify_classement(unsigned int numberArray[], char course[], Session *current_session){
-
-    // //INSERTION DES LIGNES DU FICHIER COURSE DANS NUMBERARRAY
-    // // FILE *myFile;
-    // // myFile = fopen(course, "r");
-    // int myFile ;
-   
-    // // if (myFile == NULL) {
-    // //     perror("fopen() failed !");
-    // //     exit(EXIT_FAILURE);
-    // // }
-    // if((myFile = open(course , 0)) == -1){
-    //         perror("open failed");
-    //         exit(EXIT_FAILURE);
-    // }
-    // //read file into array
-    // // for (int i = 0; i < current_session->total_cars; i++)
-    // // {   
-    //     // ssize_t r;
-    //     // if((r = read(myFile , numberArray , sizeof(numberArray))) == -1){
-    //     //     printf("error read");
-    //     //     exit(EXIT_FAILURE);
-    //     // }
-        
-    //     // fscanf(myFile, "%d", &numberArray[i]);
-    // // }
-    // //fclose(myFile);
-    // close(myFile);
-    // return 0;
-
-
     //INSERTION DES LIGNES DU FICHIER COURSE DANS NUMBERARRAY
     FILE *myFile;
     myFile = fopen(course, "r");
@@ -241,5 +211,3 @@ void prepaClassementFinal(unsigned int qualifiedCars[] , Session *current_sessio
 /****************************************
  * FIN DEFINE SESSION ET COMPAGNIE
 *****************************************/
-
-//

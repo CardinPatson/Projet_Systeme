@@ -1,5 +1,7 @@
 # Projet Système TP Janvier 2022
 
+Executer le projet : compiler le fichier exec.sh dans le dossier
+
 Le but du projet est de gérer un week-end complet d’un grand prix de Formule 1,
 depuis les séances d’essais du vendredi jusqu’à la course du dimanche, en
 passant par les essais du samedi et la séance de qualifications. Il y a 20
