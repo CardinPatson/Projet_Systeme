@@ -25,3 +25,31 @@ int main(int argc , char **argv){
  
     return 0;
 }
+
+ // //INSERTION DES LIGNES DU FICHIER COURSE DANS NUMBERARRAY
+    // // FILE *myFile;
+    // // myFile = fopen(course, "r");
+    // int myFile ;
+   
+    // // if (myFile == NULL) {
+    // //     perror("fopen() failed !");
+    // //     exit(EXIT_FAILURE);
+    // // }
+    // if((myFile = open(course , 0)) == -1){
+    //         perror("open failed");
+    //         exit(EXIT_FAILURE);
+    // }
+    // //read file into array
+    // // for (int i = 0; i < current_session->total_cars; i++)
+    // // {   
+    //     // ssize_t r;
+    //     // if((r = read(myFile , numberArray , sizeof(numberArray))) == -1){
+    //     //     printf("error read");
+    //     //     exit(EXIT_FAILURE);
+    //     // }
+        
+    //     // fscanf(myFile, "%d", &numberArray[i]);
+    // // }
+    // //fclose(myFile);
+    // close(myFile);
+    // return 0;

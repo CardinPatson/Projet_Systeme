@@ -216,7 +216,7 @@ bool goStand(unsigned int digit) {
 void goOut(int i,  Voiture *shared_memory) {
 
     //SI JATTEINT LA LIMITE DE PASSAGE AU STAND : 19
-    if(shared_memory[i].compteurStand > 2) {
+    if(shared_memory[i].compteurStand > 9) {
         shared_memory[i].isOut = true;
     }
 }
