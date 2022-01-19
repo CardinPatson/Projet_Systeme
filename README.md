@@ -2,6 +2,9 @@
 
 Executer le projet : compiler le fichier exec.sh dans le dossier
 
+LANCEMENT DE LA COURSE : executez le fichier lancement.sh dans le dossier bin/ ; 
+COMMANDE : ./bin/lancement.sh
+
 Le but du projet est de gérer un week-end complet d’un grand prix de Formule 1,
 depuis les séances d’essais du vendredi jusqu’à la course du dimanche, en
 passant par les essais du samedi et la séance de qualifications. Il y a 20

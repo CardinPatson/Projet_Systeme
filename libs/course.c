@@ -92,13 +92,14 @@ int faireDesTours( Voiture *shared_memory,  sem_t *semaphore, int i , unsigned i
 
         /*   ****       Best Time Circuit de toutes les voitures     ****     */
         //SI IL FAIT UN TPS < AU TPS DANS LA CASE SUPP
-        if (tour_complet < shared_memory[20].best_Circuit) {
+        if (tour_complet < shared_memory[20].best_Circuit && !shared_memory[i].isOut) {
             shared_memory[20].best_Circuit = tour_complet;
         }
         /*   ****       Best Time Circuit de la voiture actuelle     ****     */
-        if (tour_complet < shared_memory[i].best_Circuit) {
+        if (tour_complet < shared_memory[i].best_Circuit && !shared_memory[i].isOut) {
             shared_memory[i].best_Circuit = tour_complet;
         }
+        
         sem_post(semaphore);
 
         sleep(1);
@@ -171,14 +172,14 @@ int finale( Voiture *shared_memory, sem_t *semaphore, int i ){
         /* *************************************** */
 
         /*   ****       Best Time Circuit de toutes les voitures     ****     */
-
         //SI IL FAIT UN TPS < AU TPS DANS LA CASE SUPP
-        if (tour_complet < shared_memory[20].best_Circuit) {
+
+        if (tour_complet < shared_memory[20].best_Circuit && !shared_memory[i].isOut) {
             shared_memory[20].best_Circuit = tour_complet;
         }
 
         /*   ****       Best Time Circuit de la voiture actuelle     ****     */
-        if (tour_complet < shared_memory[i].best_Circuit) {
+        if (tour_complet < shared_memory[i].best_Circuit && !shared_memory[i].isOut) {
             shared_memory[i].best_Circuit = tour_complet;
         }
         shared_memory[i].nbre_tours++;
@@ -216,7 +217,7 @@ bool goStand(unsigned int digit) {
 void goOut(int i,  Voiture *shared_memory) {
 
     //SI JATTEINT LA LIMITE DE PASSAGE AU STAND : 19
-    if(shared_memory[i].compteurStand > 9) {
+    if(shared_memory[i].compteurStand > 7) {
         shared_memory[i].isOut = true;
     }
 }

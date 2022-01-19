@@ -46,7 +46,7 @@ void afficherTableau(Voiture *shared_memory, Voiture *copyTableau, Session curre
         printf(" |==============================================================================================|\n");
         for (int i = 0; i < current_session.total_cars; i++){
             int p = i + 1;
-        printf(" | %2d  |    %2d     |  %.3lf  |  %.3lf  |  %.3lf  |   %.3lf   |  %.3lf  |   %2d    |    %d    \n", \
+        printf(" | %2d  |    %2d     |  %.3lf  |  %.3lf  |  %.3lf  |   %.3lf   |  %.3lf  |   %2d    |    %d     |\n", \
                 p, copyTableau[i].id, \
                 copyTableau[i].s1, copyTableau[i].s2, copyTableau[i].s3, \
                 copyTableau[i].best_Circuit,\
@@ -54,7 +54,7 @@ void afficherTableau(Voiture *shared_memory, Voiture *copyTableau, Session curre
                 copyTableau[i].compteurStand, \
                 copyTableau[i].isOut);
         }
-        printf(" =====================================================================================\n\n");
+        printf(" ===============================================================================================|\n\n");
 
         printf("bs1: %.3lf, bs2: %.3lf, bs3: %.3lf et b_circuit %.3lf\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
 

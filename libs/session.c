@@ -31,7 +31,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture , unsign
 
     //SI LE 1ER ARG == P1 || P2
     if (!strcmp(argv[1], "P1") || !strcmp(argv[1], "P2")) {
-        current_session->session_time = 1000;//5400
+        current_session->session_time = 3000;//5400
         current_session->total_cars = 20;
         current_session->qualified = 20;
     }
@@ -100,7 +100,7 @@ void define_session(int argc, char *argv[], unsigned int* numeroVoiture , unsign
         //FINALE
     else if (!strcmp(argv[1], "FINALE")){
 
-        current_session->session_time =  7200;
+        current_session->session_time =  5200;
         current_session->total_cars = 20;
 
         //PREPARATION DE LA GRILLE DE DEPART POUR LA FINALE
