@@ -1,6 +1,7 @@
 #ifndef __VOITURE_H_
 #define __VOITURE_H_
 #include <semaphore.h>
+
 typedef struct Voiture {
 
    unsigned int id;
@@ -14,6 +15,11 @@ typedef struct Voiture {
     unsigned int isOut;
     unsigned int nbre_tours;
     bool isFinished ;
+
+    unsigned int best_s1;
+    unsigned int best_s2;
+    unsigned int best_s3;
+    unsigned int best_id;
 } Voiture;
 
 typedef struct Shared_data {

@@ -6,10 +6,7 @@
 #include <unistd.h>
 #include "session.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
-
+//CONSTANTE POUR ETABLIR LA GRILLE DE DEPART DE LA FINALE
 #define NUMBER_OF_STRING 3
 #define MAX_STRING_SIZE 15
 

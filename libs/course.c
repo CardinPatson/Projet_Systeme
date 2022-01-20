@@ -40,8 +40,9 @@ int faireDesTours( Voiture *shared_memory,  sem_t *semaphore, int i , unsigned i
         shared_memory[i].s1 = generateNumber();
 
         //SI IL A UN TEMPS < AU MEILLEUR
-        if (shared_memory[i].s1 < shared_memory[20].s1) {
+        if (shared_memory[i].s1 < shared_memory[20].s1 && !shared_memory[i].isOut) {
             shared_memory[20].s1 = shared_memory[i].s1;
+            shared_memory[20].best_s1 = shared_memory[i].id;
         }
 
         shared_memory[i].tempsTotal += shared_memory[i].s1;
@@ -54,8 +55,9 @@ int faireDesTours( Voiture *shared_memory,  sem_t *semaphore, int i , unsigned i
         /*   ****       S2     ****     */
         shared_memory[i].s2 = generateNumber();
 
-        if (shared_memory[i].s2 < shared_memory[20].s2) {
+        if (shared_memory[i].s2 < shared_memory[20].s2 && !shared_memory[i].isOut) {
             shared_memory[20].s2 = shared_memory[i].s2;
+            shared_memory[20].best_s2 = shared_memory[i].id;
         }
 
         shared_memory[i].tempsTotal += shared_memory[i].s2;
@@ -83,8 +85,9 @@ int faireDesTours( Voiture *shared_memory,  sem_t *semaphore, int i , unsigned i
         /* *************************************** */
 
         /*   ****       S3     ****     */
-        if (shared_memory[i].s3 < shared_memory[20].s3) {
+        if (shared_memory[i].s3 < shared_memory[20].s3 && !shared_memory[i].isOut) {
             shared_memory[20].s3 = shared_memory[i].s3;
+            shared_memory[20].best_s3 = shared_memory[i].id;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s3;
         tour_complet += shared_memory[i].s3;
@@ -94,6 +97,7 @@ int faireDesTours( Voiture *shared_memory,  sem_t *semaphore, int i , unsigned i
         //SI IL FAIT UN TPS < AU TPS DANS LA CASE SUPP
         if (tour_complet < shared_memory[20].best_Circuit && !shared_memory[i].isOut) {
             shared_memory[20].best_Circuit = tour_complet;
+            shared_memory[20].best_id = shared_memory[i].id;
         }
         /*   ****       Best Time Circuit de la voiture actuelle     ****     */
         if (tour_complet < shared_memory[i].best_Circuit && !shared_memory[i].isOut) {
@@ -121,8 +125,10 @@ int finale( Voiture *shared_memory, sem_t *semaphore, int i ){
         shared_memory[i].s1 = generateNumber();
 
         //SI IL A UN TEMPS < AU MEILLEUR
-        if (shared_memory[i].s1 < shared_memory[20].s1) {
+        if (shared_memory[i].s1 < shared_memory[20].s1 && !shared_memory[i].isOut) {
             shared_memory[20].s1 = shared_memory[i].s1;
+            shared_memory[20].best_s1 = shared_memory[i].id;
+
         }
 
         shared_memory[i].tempsTotal += shared_memory[i].s1;
@@ -135,8 +141,10 @@ int finale( Voiture *shared_memory, sem_t *semaphore, int i ){
         /*   ****       S2     ****     */
         shared_memory[i].s2 = generateNumber();
 
-        if (shared_memory[i].s2 < shared_memory[20].s2) {
+        if (shared_memory[i].s2 < shared_memory[20].s2 && !shared_memory[i].isOut) {
             shared_memory[20].s2 = shared_memory[i].s2;
+            shared_memory[20].best_s2 = shared_memory[i].id;
+
         }
 
         shared_memory[i].tempsTotal += shared_memory[i].s2;
@@ -164,8 +172,9 @@ int finale( Voiture *shared_memory, sem_t *semaphore, int i ){
         /* *************************************** */
 
         /*   ****       S3     ****     */
-        if (shared_memory[i].s3 < shared_memory[20].s3) {
+        if (shared_memory[i].s3 < shared_memory[20].s3 && !shared_memory[i].isOut) {
             shared_memory[20].s3 = shared_memory[i].s3;
+            shared_memory[20].best_s3 = shared_memory[i].id;
         }
         shared_memory[i].tempsTotal += shared_memory[i].s3;
         tour_complet += shared_memory[i].s3;
@@ -176,6 +185,7 @@ int finale( Voiture *shared_memory, sem_t *semaphore, int i ){
 
         if (tour_complet < shared_memory[20].best_Circuit && !shared_memory[i].isOut) {
             shared_memory[20].best_Circuit = tour_complet;
+            shared_memory[20].best_id = shared_memory[i].id;
         }
 
         /*   ****       Best Time Circuit de la voiture actuelle     ****     */
@@ -205,7 +215,7 @@ double generateStandStop(void){
 
 bool goStand(unsigned int digit) {
 
-    //STAND SI LE DERNIER DIGIT DE Q3 --> 9
+    //STAND SI LE DERNIER DIGIT DE S2 --> 9
     if(digit%10 == 9) {
         return true;
     }
@@ -216,7 +226,7 @@ bool goStand(unsigned int digit) {
 
 void goOut(int i,  Voiture *shared_memory) {
 
-    //SI JATTEINT LA LIMITE DE PASSAGE AU STAND : 19
+    //SI JATTEINT LA LIMITE DE PASSAGE AU STAND : 8
     if(shared_memory[i].compteurStand > 7) {
         shared_memory[i].isOut = true;
     }

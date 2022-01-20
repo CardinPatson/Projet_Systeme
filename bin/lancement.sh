@@ -1,5 +1,6 @@
 #!/bin/bash
 enter=""
+clear
 echo -e "\n********BIENVENUE DANS CETTE NOUVELLE EDITION DE LA FORMULE 1**********\n"
 echo -e "\n**********************LANCEMENT DES ESSAIES****************************\n"
 read -p 'Appuyer la touche Enter pour lancer lessaie P1 ' enter
@@ -39,3 +40,4 @@ echo -e "\n********MERCI DAVOIR PARTICIPE A CETTE EDITION DE LA FORMULE 1*******
 echo -e "\n----- VOUS VERREZ LE CLASSEMENT FINALE DANS LE FICHIER FINALE.txt  -----\n"
 echo -e ""
 echo -e "\n-----                       A BIENTOT                              -----\n"
+exit

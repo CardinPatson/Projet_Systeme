@@ -8,6 +8,7 @@
 #include "session.h"
 #include "share.h"
  
+ //CREATION DE LA MEMOIRE PARTAGE
 Voiture* create_shared_memory(Shared_data *data_shared, unsigned int total_cars){
     Voiture *shared_memory;
     data_shared->segment_id = shmget(IPC_PRIVATE, (total_cars+1)*sizeof(struct Voiture), 0666 | IPC_CREAT);
@@ -22,6 +23,7 @@ Voiture* create_shared_memory(Shared_data *data_shared, unsigned int total_cars)
     }
     return shared_memory;
 }
+
 void init_semaphore(Shared_data *data_shared){
     data_shared->sem_shm_id = shmget(IPC_PRIVATE, sizeof(sem_t), 0600 | IPC_CREAT);
     if (data_shared->sem_shm_id == -1) {
@@ -36,6 +38,7 @@ void init_semaphore(Shared_data *data_shared){
 
     sem_init(data_shared->semaphore, 1, 1);
 }
+
 void detach_shared_memory(Voiture *shared_memory ,int segment_id){
      
     /********  Détachament des segments de mémoire  *********/

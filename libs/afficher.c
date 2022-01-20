@@ -4,15 +4,14 @@
 #include <stdbool.h>
 #include <sys/types.h>
 #include <unistd.h>
-// #include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <semaphore.h>
 #include "voiture.h"
 #include "session.h"
 #include "afficher.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 //NOMBRE DE TOURS POUR LA FINALE
 #define NOMBRE_TOURS_FINALE 45
 
@@ -40,7 +39,10 @@ void afficherTableau(Voiture *shared_memory, Voiture *copyTableau, Session curre
         sortLap(copyTableau , current_session);
 
         //DISPLAY
-        printf("\n\tMeilleurs temps par tour complet\n");
+        printf("     Meilleur Secteur 1      Meilleur Secteur 2        Meilleur Secteur 3         Meilleur Circuit  \n");
+        printf("    ====================    =====================     ====================      ====================\n");
+        printf("    Voiture %d -- %.3lfs   Voiture %d -- %.3lfs    Voiture %d -- %.3lfs      Voiture %d -- %.3lfs\n\n", copyTableau[20].best_s1,copyTableau[20].s1, copyTableau[20].best_s2, copyTableau[20].s2, copyTableau[20].best_s3, copyTableau[20].s3,copyTableau[20].best_id, copyTableau[20].best_Circuit);
+
         printf(" ===============================================================================================\n");
         printf(" |  P  |  VOITURE  |    S1    |    S2    |    S3    |    TOUR    |   GAP   |  Stand  |   out    |\n");
         printf(" |==============================================================================================|\n");
@@ -55,9 +57,7 @@ void afficherTableau(Voiture *shared_memory, Voiture *copyTableau, Session curre
                 copyTableau[i].isOut);
         }
         printf(" ===============================================================================================|\n\n");
-
-        printf("bs1: %.3lf, bs2: %.3lf, bs3: %.3lf et b_circuit %.3lf\n", copyTableau[20].s1, copyTableau[20].s2, copyTableau[20].s3, copyTableau[20].best_Circuit);
-
+ 
         //SI TOUTES LES VOITURES ONT TERMINER
         if(finished(shared_memory,current_session, tempsMaxCircuit , NOMBRE_TOURS_FINALE)){
             savedFile(copyTableau, argv,current_session);
@@ -67,9 +67,8 @@ void afficherTableau(Voiture *shared_memory, Voiture *copyTableau, Session curre
     }
 }
 
-
+//CALCULE LA DIFFERENCE DE TEMPS ENTRE LES VOITURES(SUR LE TEMPS TOTAL)
 void sortLap(Voiture *copyTableau, Session current_session) {
-    //DIFFERENCE DE TEMPS ENTRE LES VOITURES(SUR LE TEMPS TOTAL)
     double difference;
     for (int i = 1; i < current_session.total_cars; i++)
     {   
@@ -88,7 +87,7 @@ void sortLap(Voiture *copyTableau, Session current_session) {
     }
 }
 
-
+//COMPARER SUR BASE DE LEUR MEILLEUR TEMPS
 int compare(const void * a, const void * b)
 {
     const Voiture *voitureA = (Voiture *)a;
@@ -108,6 +107,8 @@ int compare(const void * a, const void * b)
     }
     // return (int) ( voitureA->best_Circuit - voitureB->best_Circuit );
 }
+
+//COMPARER LES VOITURES QUI SONT OUT
 int compare_2(const void * a, const void * b){
     const Voiture *voitureA = (Voiture *)a;
     const Voiture *voitureB = (Voiture *)b;
@@ -153,9 +154,9 @@ int savedFile(Voiture *copyTableau,  char *argv , Session current_session) {
         perror("open failed");
         exit(EXIT_FAILURE);
     }
-    char buffer[50];
-    char temp[4];
-    for (int i = 0; i < current_session.total_cars; ++i)
+    char buffer[40] = "";
+    char temp[4] = "";
+    for (int i = 0; i < current_session.total_cars; i++)
     {   
         sprintf(temp, "%d\n", copyTableau[i].id);
         strcat(buffer,temp);
