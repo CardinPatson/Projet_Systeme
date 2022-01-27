@@ -4,7 +4,12 @@ Executer le projet : compiler le fichier exec.sh dans le dossier
 
 ### LANCEMENT DE LA COURSE :
 
-executez le fichier lancement.sh (**./bin/lancement.sh**)dans le dossier bin/ ;
+executez le fichier lancement.sh dans le dossier bin/ ;
+
+```
+cd ./bin
+./lancement.sh
+```
 
 ## Description
 
