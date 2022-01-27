@@ -2,16 +2,16 @@
 enter=""
 clear
 echo -e "\n********BIENVENUE DANS CETTE NOUVELLE EDITION DE LA FORMULE 1**********\n"
-echo -e "\n**********************LANCEMENT DES ESSAIES****************************\n"
-read -p 'Appuyer la touche Enter pour lancer lessaie P1 ' enter
+echo -e "\n**********************LANCEMENT DES ESSAIS****************************\n"
+read -p 'Appuyer la touche Enter pour lancer essai P1 ' enter
 ./main P1
 clear
 echo -e "\n***************CLASSEMENT DE P1 DANS LE FICHIER P1.txt*****************\n"
-read -p 'Appuyer la touche Enter pour lancer lessaie P2 ' enter
+read -p 'Appuyer la touche Enter pour lancer essai P2 ' enter
 ./main P2
 clear
 echo -e "\n***************CLASSEMENT DE P2 DANS LE FICHIER P1.txt*****************\n"
-read -p 'Appuyer la touche Enter pour lancer lessaie P3 ' enter
+read -p 'Appuyer la touche Enter pour lancer essai P3 ' enter
 ./main P3
 clear
 echo -e "\n***************CLASSEMENT DE P3 DANS LE FICHIER P3.txt******************\n"
